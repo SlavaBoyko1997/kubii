@@ -1,29 +1,40 @@
-@foreach($menuCategories as $category)
-    <div class="menu-group">
-        <a class="menu-parent" href="{{ $category['url'] ?? '#' }}">
-            <span class="menu-parent-media">@include('store._category-image', ['category' => $category])</span>
-            <span>
-                <strong>{{ $category['name'] }}</strong>
-                <small>{{ number_format($category['products_count']) }} {{ __('товарів') }}</small>
-            </span>
-        </a>
-        <div class="menu-children">
-            @foreach($category['children'] as $child)
-                @include('store._menu-category', ['category' => $child])
-            @endforeach
+<div class="mega-roots">
+    @foreach($menuCategories as $index => $category)
+        <button type="button" class="{{ $index === 0 ? 'is-current' : '' }}" data-mega-root-mobile="{{ $category['id'] }}">{{ $category['name'] }}</button>
+    @endforeach
+</div>
+
+<div class="mega-desktop">
+    @foreach($menuCategories as $index => $category)
+        @php($branches = $category['all_children'] ?? $category['children'] ?? [])
+        <div class="mega-panel {{ $index === 0 ? 'is-active' : '' }}" data-mega-panel="{{ $category['id'] }}">
+            <div class="mega-panel-inner">
+                <div class="mega-columns">
+                    @forelse($branches as $child)
+                        @php($leaves = array_values($child['all_children'] ?? $child['children'] ?? []))
+                        @php($visibleLeaves = array_slice($leaves, 0, 8))
+                        @php($hiddenLeaves = array_slice($leaves, 8))
+                        <div class="mega-column">
+                            <a class="mega-column-title" href="{{ $child['url'] ?? '#' }}">{{ $child['name'] }}</a>
+                            @foreach($visibleLeaves as $leaf)
+                                <a href="{{ $leaf['url'] ?? '#' }}">{{ $leaf['name'] }}</a>
+                            @endforeach
+                            @if($hiddenLeaves !== [])
+                                <div class="mega-extra" hidden>
+                                    @foreach($hiddenLeaves as $leaf)
+                                        <a href="{{ $leaf['url'] ?? '#' }}">{{ $leaf['name'] }}</a>
+                                    @endforeach
+                                </div>
+                                <button class="mega-more" type="button" data-mega-more>{{ __('Показати ще') }}</button>
+                            @endif
+                        </div>
+                    @empty
+                        <div class="mega-column">
+                            <a class="mega-column-title" href="{{ $category['url'] ?? '#' }}">{{ $category['name'] }}</a>
+                        </div>
+                    @endforelse
+                </div>
+            </div>
         </div>
-        @if($category['children_count'] > count($category['children']))
-            <button class="menu-more" type="button" data-menu-drill>{{ __('Усі підрозділи: :count', ['count' => $category['children_count']]) }} →</button>
-            <template data-menu-template>
-                <button class="menu-back" type="button" data-menu-back>
-                    <span aria-hidden="true">←</span>
-                    <strong>{{ $category['name'] }}</strong>
-                </button>
-                <a class="menu-current-link" href="{{ $category['url'] ?? '#' }}">{{ __('Перейти в розділ') }} →</a>
-                @foreach(($category['all_children'] ?? $category['children']) as $child)
-                    @include('store._menu-category', ['category' => $child])
-                @endforeach
-            </template>
-        @endif
-    </div>
-@endforeach
+    @endforeach
+</div>

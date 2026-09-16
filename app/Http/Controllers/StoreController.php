@@ -42,9 +42,15 @@ class StoreController extends Controller
         'price',
     ];
 
+    /**
+     * @var array{name: string, slug: string, products_count: int}|null
+     */
+    private ?array $lockedBrand = null;
+
     private const BASE_FILTERS = [
         'sale' => 'Акційні товари',
         'brand' => 'Бренд',
+        'catalog_category' => 'Категорія',
         'model' => 'Модель',
         'price' => 'Ціна',
         'season' => 'Сезон',
@@ -69,6 +75,43 @@ class StoreController extends Controller
             'seoSchema' => $seoSchema->home(),
             'seoMeta' => $seoMeta->home(),
         ]);
+    }
+
+    public function brands(CatalogCache $cache, SeoMeta $seoMeta, SeoSchema $seoSchema): View
+    {
+        $brands = $cache->brands();
+        $url = localized_route('brands.index');
+        $title = __('Бренди');
+        $description = __('Усі бренди спорядження Kubii.');
+
+        return view('store.brands', [
+            'brands' => $brands,
+            'brandGroups' => $cache->brandGroups(),
+            'canonicalUrl' => $url,
+            'seoMeta' => $seoMeta->page($title, $description, $url),
+            'seoSchema' => $seoSchema->page($title, $description, $url, 'CollectionPage'),
+        ]);
+    }
+
+    public function brand(
+        Request $request,
+        CatalogCache $cache,
+        CatalogSpecificationFacets $specificationFacets,
+        SeoSchema $seoSchema,
+        SeoMeta $seoMeta,
+        CatalogFilterHeading $filterHeading,
+        string $brand,
+    ): View|JsonResponse|RedirectResponse {
+        $resolved = $cache->brandBySlug($brand);
+        abort_unless($resolved, 404);
+
+        if ($resolved['slug'] !== $brand) {
+            return redirect()->to(localized_route('brands.show', $resolved['slug'], false).($request->getQueryString() ? '?'.$request->getQueryString() : ''), 301);
+        }
+
+        $this->lockedBrand = $resolved;
+
+        return $this->catalog($request, $cache, $specificationFacets, $seoSchema, $seoMeta, $filterHeading, null);
     }
 
     /**
@@ -208,13 +251,15 @@ class StoreController extends Controller
 
     public function catalog(Request $request, CatalogCache $cache, CatalogSpecificationFacets $specificationFacets, SeoSchema $seoSchema, SeoMeta $seoMeta, CatalogFilterHeading $filterHeading, ?Category $category = null): View|JsonResponse|RedirectResponse
     {
-        abort_unless($category, 404);
+        abort_unless($category || $this->lockedBrand, 404);
 
         $request->validate([
             'filter' => ['nullable', 'string', 'max:1200'],
             'search' => ['nullable', 'string', 'max:120'],
             'brand' => ['nullable', 'array', 'max:20'],
             'brand.*' => ['string', 'max:120'],
+            'catalog_category' => ['nullable', 'array', 'max:20'],
+            'catalog_category.*' => ['string', 'max:160'],
             'model' => ['nullable', 'array', 'max:20'],
             'model.*' => ['string', 'max:120'],
             'season' => ['nullable', 'array', 'max:20'],
@@ -236,8 +281,14 @@ class StoreController extends Controller
             'page' => ['nullable', 'integer', 'min:1'],
         ]);
 
+        $listingSize = $category
+            ? $cache->categoryProductCount($category->id)
+            : (int) ($this->lockedBrand['products_count'] ?? 0);
         $deferInitialFilters = ! $request->expectsJson()
-            && $cache->categoryProductCount($category->id) >= (int) config('performance.large_catalog_threshold', 2000);
+            && (
+                $this->lockedBrand !== null
+                || $listingSize >= (int) config('performance.large_catalog_threshold', 2000)
+            );
         $fastFilters = ($request->expectsJson() && $request->boolean('fast_filters')) || $deferInitialFilters;
         $filtersOnly = $request->expectsJson() && $request->boolean('filters_only');
         $request->query->remove('fast_filters');
@@ -256,12 +307,17 @@ class StoreController extends Controller
 
         $visibleBaseFilters = $this->visibleBaseFilters($category);
         $configuredSpecFilterKeys = $cache->remember(
-            'spec-filter-keys:v1:'.($category ? 'category-'.$category->id : 'all'),
+            'spec-filter-keys:v1:'.($category ? 'category-'.$category->id : 'brand-'.($this->lockedBrand['slug'] ?? 'all')),
             fn (): array => $this->configuredSpecFilterKeys($category),
         );
-        $specFiltersDisabled = $category?->resolvedVisibleSpecFilters() === [];
+        $specFiltersDisabled = $this->lockedBrand !== null || $category?->resolvedVisibleSpecFilters() === [];
         $search = trim((string) $request->query('search'));
-        $brands = in_array('brand', $visibleBaseFilters, true) ? array_filter((array) $request->query('brand', [])) : [];
+        $brands = $this->lockedBrand
+            ? [$this->lockedBrand['name']]
+            : (in_array('brand', $visibleBaseFilters, true) ? array_filter((array) $request->query('brand', [])) : []);
+        $catalogCategories = in_array('catalog_category', $visibleBaseFilters, true)
+            ? array_values(array_filter((array) $request->query('catalog_category', [])))
+            : [];
         $models = in_array('model', $visibleBaseFilters, true) ? array_filter((array) $request->query('model', [])) : [];
         $seasons = in_array('season', $visibleBaseFilters, true) ? array_filter((array) $request->query('season', [])) : [];
         $usageTypes = in_array('usage_type', $visibleBaseFilters, true) ? array_filter((array) $request->query('usage_type', [])) : [];
@@ -287,10 +343,13 @@ class StoreController extends Controller
         $seasonColumn = Locale::isRussian() ? 'season_ru' : 'season';
         $usageTypeColumn = Locale::isRussian() ? 'usage_type_ru' : 'usage_type';
         $materialColumn = Locale::isRussian() ? 'material_ru' : 'material';
-        $filterScope = $category ? 'category-'.$category->id : 'all';
+        $filterScope = $category
+            ? 'category-'.$category->id
+            : 'brand-'.($this->lockedBrand['slug'] ?? 'all');
         $baseFilterLabels = $this->baseFilterLabels($category);
         $filterHeadingSuffix = $filterHeading->suffix([
-            ['label' => mb_strtolower($baseFilterLabels['brand']), 'values' => $brands],
+            ['label' => mb_strtolower($baseFilterLabels['brand']), 'values' => $this->lockedBrand ? [] : $brands],
+            ['label' => mb_strtolower($baseFilterLabels['catalog_category']), 'values' => $catalogCategories],
             ['label' => mb_strtolower($baseFilterLabels['model']), 'values' => $models],
             ['label' => mb_strtolower($baseFilterLabels['season']), 'values' => $seasons],
             ['label' => mb_strtolower($baseFilterLabels['usage_type']), 'values' => $usageTypes],
@@ -304,7 +363,8 @@ class StoreController extends Controller
             $onSale ? __('акційні') : null,
         ]));
         $hasDependentFilters = $search !== ''
-            || $brands !== []
+            || ($brands !== [] && ! $this->lockedBrand)
+            || $catalogCategories !== []
             || $models !== []
             || $seasons !== []
             || $usageTypes !== []
@@ -316,7 +376,7 @@ class StoreController extends Controller
             || $inStock
             || $onSale;
 
-        $filteredProductsQuery = function (array $except = [], bool $visibleInCatalog = true) use ($category, $categoryIds, $search, $brands, $models, $seasons, $usageTypes, $materials, $specFilters, $minPrice, $maxPrice, $maxWeight, $inStock, $onSale, $specificationFacets, $nameColumn, $seasonColumn, $usageTypeColumn, $materialColumn): Builder {
+        $filteredProductsQuery = function (array $except = [], bool $visibleInCatalog = true) use ($category, $categoryIds, $search, $brands, $catalogCategories, $models, $seasons, $usageTypes, $materials, $specFilters, $minPrice, $maxPrice, $maxWeight, $inStock, $onSale, $specificationFacets, $nameColumn, $seasonColumn, $usageTypeColumn, $materialColumn): Builder {
             $query = Product::query()
                 ->where('is_active', true)
                 ->when($visibleInCatalog, fn ($query) => $query->visibleInCatalog())
@@ -329,6 +389,17 @@ class StoreController extends Controller
                     }
                 }))
                 ->when(! in_array('brand', $except, true) && $brands, fn ($query) => $query->whereIn('brand', $brands))
+                ->when(! in_array('catalog_category', $except, true) && $catalogCategories, function ($query) use ($catalogCategories): void {
+                    $categoryIds = Category::query()
+                        ->where(function (Builder $query) use ($catalogCategories): void {
+                            $query->whereIn('name', $catalogCategories)
+                                ->orWhereIn('name_ru', $catalogCategories);
+                        })
+                        ->pluck('id')
+                        ->all();
+
+                    $query->whereIn('category_id', $categoryIds !== [] ? $categoryIds : [-1]);
+                })
                 ->when(! in_array('model', $except, true) && $models, fn ($query) => $query->whereIn('model', $models))
                 ->when(! in_array('season', $except, true) && $seasons, fn ($query) => $query->whereIn($seasonColumn, $seasons))
                 ->when(! in_array('usage_type', $except, true) && $usageTypes, fn ($query) => $query->whereIn($usageTypeColumn, $usageTypes))
@@ -350,7 +421,7 @@ class StoreController extends Controller
             return $query;
         };
 
-        $cachedData = $cache->rememberFor('catalog-data:v14:'.($fastFilters ? 'fast' : 'full').':'.$filterScope.':'.sha1(json_encode($this->normalizedQuery($request), JSON_UNESCAPED_UNICODE)), self::DYNAMIC_CACHE_TTL_SECONDS, function () use ($cache, $category, $filterScope, $filteredProductsQuery, $specificationFacets, $hasDependentFilters, $specFilters, $configuredSpecFilterKeys, $specFiltersDisabled, $brands, $models, $seasons, $usageTypes, $materials, $minPrice, $maxPrice, $maxWeight, $inStock, $onSale, $visibleBaseFilters, $baseFilterLabels, $sort, $perPage, $page, $fastFilters, $seasonColumn, $usageTypeColumn, $materialColumn, $filterHeadingSuffix): array {
+        $cachedData = $this->rememberCatalogPayload($cache, 'catalog-data:v15:'.($fastFilters ? 'fast' : 'full').':'.$filterScope.':'.sha1(json_encode($this->normalizedQuery($request), JSON_UNESCAPED_UNICODE)), function () use ($cache, $category, $filterScope, $filteredProductsQuery, $specificationFacets, $hasDependentFilters, $specFilters, $configuredSpecFilterKeys, $specFiltersDisabled, $brands, $catalogCategories, $models, $seasons, $usageTypes, $materials, $minPrice, $maxPrice, $maxWeight, $inStock, $onSale, $visibleBaseFilters, $baseFilterLabels, $sort, $perPage, $page, $fastFilters, $seasonColumn, $usageTypeColumn, $materialColumn, $filterHeadingSuffix): array {
             $filterPopularity = $cache->remember(
                 'filter-popularity:v1:'.$filterScope,
                 fn (): array => $this->filterPopularity($category),
@@ -368,7 +439,7 @@ class StoreController extends Controller
                     'created_at',
                 ]);
 
-            if (! $hasDependentFilters) {
+            if (! $hasDependentFilters && $category) {
                 $this->forceProductIndex($query, 'products_catalog_popular_v2_idx');
             }
 
@@ -423,6 +494,7 @@ class StoreController extends Controller
 
                     return [
                         'brands' => in_array('brand', $visibleBaseFilters, true) ? $this->facetCounts($filteredProductsQuery(['brand']), 'brand') : [],
+                        'catalogCategories' => in_array('catalog_category', $visibleBaseFilters, true) ? $this->catalogCategoryFacets($filteredProductsQuery(['catalog_category'])) : [],
                         'models' => in_array('model', $visibleBaseFilters, true) ? $this->facetCounts($filteredProductsQuery(['model']), 'model') : [],
                         'seasons' => in_array('season', $visibleBaseFilters, true) ? $this->facetCounts($filteredProductsQuery(['season']), $seasonColumn) : [],
                         'usageTypes' => in_array('usage_type', $visibleBaseFilters, true) ? $this->facetCounts($filteredProductsQuery(['usage_type']), $usageTypeColumn) : [],
@@ -475,9 +547,12 @@ class StoreController extends Controller
                 ->sortByDesc(fn (array $filter): int => $filterPopularity['filters'][$filter['key']] ?? 0)
                 ->values()
                 ->all();
-            $activeFilterLabels = $this->activeFilterLabels($category, $baseFilterLabels, $brands, $models, $seasons, $usageTypes, $materials, $specFilters, $minPrice, $maxPrice, $maxWeight, $inStock, $onSale);
-            $catalogHeading = $category?->filteredPageH1($filterHeadingSuffix) ?? __('Каталог товарів');
-            $availableBrands = $fastFilters || ! in_array('brand', $visibleBaseFilters, true) ? [] : $this->sortFacetValues($this->withSelectedFacetValues($baseFacetData['brands'] ?? $this->facetCounts($filteredProductsQuery(['brand']), 'brand'), $brands), 'brand', $filterPopularity);
+            $activeFilterLabels = $this->activeFilterLabels($category, $baseFilterLabels, $this->lockedBrand ? [] : $brands, $models, $seasons, $usageTypes, $materials, $specFilters, $minPrice, $maxPrice, $maxWeight, $inStock, $onSale, $catalogCategories);
+            $catalogHeading = $this->lockedBrand
+                ? trim($this->lockedBrand['name'].($filterHeadingSuffix !== '' ? ' '.$filterHeadingSuffix : ''))
+                : ($category?->filteredPageH1($filterHeadingSuffix) ?? __('Каталог товарів'));
+            $availableBrands = $fastFilters || ! in_array('brand', $visibleBaseFilters, true) ? [] : $this->sortFacetValues($this->withSelectedFacetValues($baseFacetData['brands'] ?? $this->facetCounts($filteredProductsQuery(['brand']), 'brand'), $this->lockedBrand ? [] : $brands), 'brand', $filterPopularity);
+            $availableCatalogCategories = $fastFilters || ! in_array('catalog_category', $visibleBaseFilters, true) ? [] : $this->sortFacetValues($this->withSelectedFacetValues($baseFacetData['catalogCategories'] ?? $this->catalogCategoryFacets($filteredProductsQuery(['catalog_category'])), $catalogCategories), 'catalog_category', $filterPopularity);
             $availableModels = $fastFilters || ! in_array('model', $visibleBaseFilters, true) ? [] : $this->sortFacetValues($this->withSelectedFacetValues($baseFacetData['models'] ?? $this->facetCounts($filteredProductsQuery(['model']), 'model'), $models), 'model', $filterPopularity);
             $availableSeasons = $fastFilters || ! in_array('season', $visibleBaseFilters, true) ? [] : $this->sortFacetValues($this->withSelectedFacetValues($baseFacetData['seasons'] ?? $this->facetCounts($filteredProductsQuery(['season']), $seasonColumn), $seasons), 'season', $filterPopularity);
             $availableUsageTypes = $fastFilters || ! in_array('usage_type', $visibleBaseFilters, true) ? [] : $this->sortFacetValues($this->withSelectedFacetValues($baseFacetData['usageTypes'] ?? $this->facetCounts($filteredProductsQuery(['usage_type']), $usageTypeColumn), $usageTypes), 'usage_type', $filterPopularity);
@@ -525,7 +600,7 @@ class StoreController extends Controller
                 $hasSaleProducts,
                 $hasWeightProducts,
                 $hasOutOfStockProducts,
-                $brands,
+                $this->lockedBrand ? [] : $brands,
                 $models,
                 $seasons,
                 $usageTypes,
@@ -538,6 +613,13 @@ class StoreController extends Controller
                 $category !== null && $cache->categoryHasProducts($category->id),
             );
 
+            if (
+                in_array('catalog_category', $visibleBaseFilters, true)
+                && ($availableCatalogCategories !== [] || $catalogCategories !== [])
+            ) {
+                array_unshift($displayBaseFilters, 'catalog_category');
+            }
+
             return [
                 'productIds' => $productIds,
                 'pagination' => [
@@ -546,6 +628,7 @@ class StoreController extends Controller
                     'currentPage' => $page,
                 ],
                 'availableBrands' => $availableBrands,
+                'availableCatalogCategories' => $availableCatalogCategories,
                 'availableModels' => $availableModels,
                 'availableSeasons' => $availableSeasons,
                 'availableUsageTypes' => $availableUsageTypes,
@@ -553,7 +636,8 @@ class StoreController extends Controller
                 'dynamicSpecFilters' => $dynamicSpecFilters,
                 'baseFilterLabels' => $baseFilterLabels,
                 'visibleBaseFilters' => $displayBaseFilters,
-                'selectedBrands' => $brands,
+                'selectedBrands' => $this->lockedBrand ? [] : $brands,
+                'selectedCatalogCategories' => $catalogCategories,
                 'selectedModels' => $models,
                 'selectedSeasons' => $seasons,
                 'selectedUsageTypes' => $usageTypes,
@@ -576,11 +660,12 @@ class StoreController extends Controller
         });
         $profiler->checkpoint('catalog_results_and_facets');
 
-        $showcaseCategories = $request->expectsJson()
+        $showcaseCategories = $request->expectsJson() || ! $category
             ? collect()
             : collect($cache->categoryShowcase($category->id));
         $activeFilterQuery = array_filter([
-            'brand' => $brands,
+            'brand' => $this->lockedBrand ? [] : $brands,
+            'catalog_category' => $catalogCategories,
             'model' => $models,
             'season' => $seasons,
             'usage_type' => $usageTypes,
@@ -597,13 +682,15 @@ class StoreController extends Controller
             ...$cachedData,
             'deferFilterHydration' => $deferInitialFilters,
             'currentCategory' => $category,
+            'currentBrand' => $this->lockedBrand['name'] ?? null,
+            'currentBrandSlug' => $this->lockedBrand['slug'] ?? null,
             'search' => $search,
             'canonicalUrl' => $this->canonicalCatalogUrl($category, $request),
             'seoRobots' => $usesFilterQueryParameter ? 'noindex, follow' : 'index, follow',
             'showcaseCategories' => $showcaseCategories,
             'catalogBaseUrl' => $this->catalogUrl($category, []),
             'resetUrl' => $this->catalogUrl($category, Arr::only($request->query(), ['search', 'sort', 'per_page'])),
-            'activeFilters' => $this->activeFilterItems($request, $category, $baseFilterLabels, $brands, $models, $seasons, $usageTypes, $materials, $specFilters, $minPrice, $maxPrice, $maxWeight, $inStock, $onSale),
+            'activeFilters' => $this->activeFilterItems($request, $category, $baseFilterLabels, $this->lockedBrand ? [] : $brands, $models, $seasons, $usageTypes, $materials, $specFilters, $minPrice, $maxPrice, $maxWeight, $inStock, $onSale, $catalogCategories),
             'relativeUrl' => static fn (?string $url): string => AppUrl::relativePath($url),
             'filterHeadingSuffix' => $filterHeadingSuffix,
             'filterOptionUrl' => fn (string $name, string $value): string => $this->filterOptionUrl($category, $activeFilterQuery, $name, $value),
@@ -618,9 +705,8 @@ class StoreController extends Controller
             ? null
             : ($data['showAdminFilterControls']
                 ? AppUrl::sanitizeHtmlUrls(view('store._catalog-filter-fields', $data)->render())
-                : AppUrl::sanitizeHtmlUrls($cache->rememberFor(
+                : AppUrl::sanitizeHtmlUrls($this->rememberCatalogPayload($cache,
                 'catalog-filter-fields-html:v2:'.$filterScope.':'.$filterQueryHash,
-                self::DYNAMIC_CACHE_TTL_SECONDS,
                 fn (): string => view('store._catalog-filter-fields', $data)->render(),
             )));
 
@@ -633,8 +719,15 @@ class StoreController extends Controller
             ]);
         }
 
-        $paginationCompact = $this->compactCatalogQuery(Arr::except($request->query(), 'page'));
-        $paginationPath = $this->catalogPaginationPath($category, Arr::except($request->query(), 'page'));
+        $paginationQuery = Arr::except($request->query(), 'page');
+        if ($this->lockedBrand) {
+            Arr::forget($paginationQuery, ['brand', 'fast_filters']);
+            $paginationCompact = ['query' => $this->sortNestedQuery($paginationQuery), 'pathTokens' => []];
+            $paginationPath = $this->catalogPaginationPath($category, $paginationQuery);
+        } else {
+            $paginationCompact = $this->compactCatalogQuery($paginationQuery);
+            $paginationPath = $this->catalogPaginationPath($category, $paginationQuery);
+        }
         $hydratedProducts = null;
         $loadProducts = function () use (&$hydratedProducts, $cachedData) {
             return $hydratedProducts ??= $this->productsByCachedIds($cachedData['productIds'] ?? []);
@@ -660,7 +753,7 @@ class StoreController extends Controller
             $this->normalizedQuery($request),
             JSON_UNESCAPED_UNICODE,
         ));
-        $cachedResultsHtml = $cache->rememberFor($resultsHtmlKey, self::DYNAMIC_CACHE_TTL_SECONDS, function () use ($data, $loadProducts, $makePaginator): string {
+        $cachedResultsHtml = $this->rememberCatalogPayload($cache, $resultsHtmlKey, function () use ($data, $loadProducts, $makePaginator): string {
             $html = view('store._catalog-results', [
                 ...$data,
                 'products' => $makePaginator($loadProducts()),
@@ -684,19 +777,45 @@ class StoreController extends Controller
                 'filters' => $data['filterFieldsHtml'],
                 'url' => AppUrl::forBrowser($this->catalogUrl($category, $request->query())),
                 'heading' => $data['catalogHeading'] ?? null,
-                'title' => $category ? $seoMeta->category($category, $data['canonicalUrl'], $filterHeadingSuffix, $page)['title'] : null,
+                'title' => $category
+                    ? $seoMeta->category($category, $data['canonicalUrl'], $filterHeadingSuffix, $page)['title']
+                    : $seoMeta->page($data['catalogHeading'] ?? __('Бренди'), __('Товари бренду :brand у магазині Kubii.', ['brand' => $this->lockedBrand['name'] ?? '']), $data['canonicalUrl'])['title'],
             ]);
         }
 
-        $data['seoSchema'] = $cache->rememberFor(
-            'seo-schema:v1:category-'.$category->id.':'.sha1($data['canonicalUrl'].'|'.implode(',', $cachedData['productIds'] ?? [])),
-            self::DYNAMIC_CACHE_TTL_SECONDS,
-            fn (): array => $seoSchema->category($category, $makePaginator($loadProducts()), $data['canonicalUrl'], $data['catalogHeading'] ?? $category->pageH1()),
+        $seoScope = $category ? 'category-'.$category->id : 'brand-'.($this->lockedBrand['slug'] ?? 'all');
+        $data['seoSchema'] = $this->rememberCatalogPayload(
+            $cache,
+            'seo-schema:v1:'.$seoScope.':'.sha1($data['canonicalUrl'].'|'.implode(',', $cachedData['productIds'] ?? [])),
+            function () use ($seoSchema, $category, $makePaginator, $loadProducts, $data): array {
+                if ($category) {
+                    return $seoSchema->category($category, $makePaginator($loadProducts()), $data['canonicalUrl'], $data['catalogHeading'] ?? $category->pageH1());
+                }
+
+                return $seoSchema->page(
+                    $data['catalogHeading'] ?? __('Бренди'),
+                    __('Товари бренду :brand у магазині Kubii.', ['brand' => $this->lockedBrand['name'] ?? '']),
+                    $data['canonicalUrl'],
+                    'CollectionPage',
+                );
+            },
         );
-        $data['seoMeta'] = $cache->rememberFor(
-            'seo-meta:v3:category-'.$category->id.':'.sha1($data['canonicalUrl']),
-            self::DYNAMIC_CACHE_TTL_SECONDS,
-            fn (): array => $seoMeta->category($category, $data['canonicalUrl'], $filterHeadingSuffix, $page),
+        $data['seoMeta'] = $this->rememberCatalogPayload(
+            $cache,
+            'seo-meta:v3:'.$seoScope.':'.sha1($data['canonicalUrl']),
+            function () use ($seoMeta, $category, $data, $filterHeadingSuffix, $page): array {
+                if ($category) {
+                    return $seoMeta->category($category, $data['canonicalUrl'], $filterHeadingSuffix, $page);
+                }
+
+                $pageSuffix = $page > 1 ? ' — '.__('сторінка :page', ['page' => $page]) : '';
+
+                return $seoMeta->page(
+                    ($data['catalogHeading'] ?? __('Бренди')).$pageSuffix,
+                    __('Товари бренду :brand у магазині Kubii. Фільтри, наявність і ціни.', ['brand' => $this->lockedBrand['name'] ?? '']).$pageSuffix,
+                    $data['canonicalUrl'],
+                );
+            },
         );
         $profiler->checkpoint('seo_and_controller');
 
@@ -960,6 +1079,46 @@ class StoreController extends Controller
                 ->orderByDesc('is_primary_variant')
                 ->orderBy('id'),
         ];
+    }
+
+    private function catalogCategoryFacets(Builder $query): array
+    {
+        $counts = (clone $query)
+            ->whereNotNull('category_id')
+            ->selectRaw('category_id as value, COUNT(*) as aggregate')
+            ->groupBy('category_id')
+            ->orderByDesc('aggregate')
+            ->limit(100)
+            ->pluck('aggregate', 'value')
+            ->map(fn ($count): int => (int) $count)
+            ->all();
+
+        if ($counts === []) {
+            return [];
+        }
+
+        $names = Category::query()
+            ->whereIn('id', array_keys($counts))
+            ->get(['id', 'name', 'name_ru'])
+            ->mapWithKeys(fn (Category $category): array => [
+                (int) $category->id => $category->translated('name') ?: $category->name,
+            ]);
+
+        $facets = [];
+
+        foreach ($counts as $id => $count) {
+            $name = $names[(int) $id] ?? null;
+
+            if (! $name) {
+                continue;
+            }
+
+            $facets[$name] = ($facets[$name] ?? 0) + $count;
+        }
+
+        ksort($facets);
+
+        return $facets;
     }
 
     private function facetCounts(Builder $query, string $column): array
@@ -1237,7 +1396,7 @@ class StoreController extends Controller
         return Str::slug($value, '-', 'uk') ?: Str::slug($value);
     }
 
-    private function filterOptionUrl(Category $category, array $activeFilterQuery, string $name, string $value): string
+    private function filterOptionUrl(?Category $category, array $activeFilterQuery, string $name, string $value): string
     {
         $query = $activeFilterQuery;
 
@@ -1252,8 +1411,6 @@ class StoreController extends Controller
 
     private function catalogUrl(?Category $category, array $query, bool $absolute = false): string
     {
-        abort_unless($category, 404);
-
         $path = $this->catalogPaginationPath($category, $query);
 
         if ($absolute) {
@@ -1263,8 +1420,17 @@ class StoreController extends Controller
         return $path;
     }
 
-    private function catalogPaginationPath(Category $category, array $query): string
+    private function catalogPaginationPath(?Category $category, array $query): string
     {
+        if ($this->lockedBrand) {
+            Arr::forget($query, ['brand', 'fast_filters']);
+            $path = localized_route('brands.show', ['brand' => $this->lockedBrand['slug']], false);
+
+            return AppUrl::relativePath($this->urlWithQuery($path, $this->sortNestedQuery($query)));
+        }
+
+        abort_unless($category, 404);
+
         $compact = $this->compactCatalogQuery($query);
         $query = $compact['query'];
         $path = $category->catalogUrl([], absolute: false);
@@ -1294,6 +1460,13 @@ class StoreController extends Controller
 
     private function catalogUsesFilterQueryParameter(?Category $category, Request $request): bool
     {
+        if ($this->lockedBrand) {
+            $query = $request->query();
+            Arr::forget($query, ['page', 'sort', 'per_page']);
+
+            return $query !== [];
+        }
+
         abort_unless($category, 404);
 
         return filled($this->compactCatalogQuery($request->query())['query']['filter'] ?? null);
@@ -1390,12 +1563,13 @@ class StoreController extends Controller
         return mb_strtolower($path).($query === [] ? '' : '?'.http_build_query($query));
     }
 
-    private function activeFilterLabels(?Category $category, array $baseFilterLabels, array $brands, array $models, array $seasons, array $usageTypes, array $materials, array $specFilters, ?int $minPrice, ?int $maxPrice, ?int $maxWeight, bool $inStock, bool $onSale): array
+    private function activeFilterLabels(?Category $category, array $baseFilterLabels, array $brands, array $models, array $seasons, array $usageTypes, array $materials, array $specFilters, ?int $minPrice, ?int $maxPrice, ?int $maxWeight, bool $inStock, bool $onSale, array $catalogCategories = []): array
     {
         $labels = [];
 
         foreach ([
             mb_strtolower($baseFilterLabels['brand']) => $brands,
+            mb_strtolower($baseFilterLabels['catalog_category']) => $catalogCategories,
             mb_strtolower($baseFilterLabels['model']) => $models,
             mb_strtolower($baseFilterLabels['season']) => $seasons,
             mb_strtolower($baseFilterLabels['usage_type']) => $usageTypes,
@@ -1437,12 +1611,13 @@ class StoreController extends Controller
         return $labels;
     }
 
-    private function activeFilterItems(Request $request, ?Category $category, array $baseFilterLabels, array $brands, array $models, array $seasons, array $usageTypes, array $materials, array $specFilters, ?int $minPrice, ?int $maxPrice, ?int $maxWeight, bool $inStock, bool $onSale): array
+    private function activeFilterItems(Request $request, ?Category $category, array $baseFilterLabels, array $brands, array $models, array $seasons, array $usageTypes, array $materials, array $specFilters, ?int $minPrice, ?int $maxPrice, ?int $maxWeight, bool $inStock, bool $onSale, array $catalogCategories = []): array
     {
         $items = [];
 
         foreach ([
             'brand' => [mb_strtolower($baseFilterLabels['brand']), $brands],
+            'catalog_category' => [mb_strtolower($baseFilterLabels['catalog_category']), $catalogCategories],
             'model' => [mb_strtolower($baseFilterLabels['model']), $models],
             'season' => [mb_strtolower($baseFilterLabels['season']), $seasons],
             'usage_type' => [mb_strtolower($baseFilterLabels['usage_type']), $usageTypes],
@@ -1525,6 +1700,10 @@ class StoreController extends Controller
 
     private function visibleBaseFilters(?Category $category): array
     {
+        if ($this->lockedBrand) {
+            return ['catalog_category', 'model', 'price', 'stock'];
+        }
+
         if ($category === null) {
             return self::DEFAULT_BASE_FILTERS;
         }
@@ -1666,6 +1845,15 @@ class StoreController extends Controller
         ksort($query);
 
         return $this->sortNestedQuery($query);
+    }
+
+    private function rememberCatalogPayload(CatalogCache $cache, string $key, \Closure $resolver): mixed
+    {
+        if ($this->lockedBrand) {
+            return $cache->remember($key, $resolver);
+        }
+
+        return $cache->rememberFor($key, self::DYNAMIC_CACHE_TTL_SECONDS, $resolver);
     }
 
     private function sortNestedQuery(array $query): array

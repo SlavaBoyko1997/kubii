@@ -38,6 +38,7 @@ Route::get('/sitemap.xml', [SitemapController::class, 'index'])->withoutMiddlewa
 Route::get('/sitemap-static.xml', [SitemapController::class, 'static'])->withoutMiddleware($statelessMiddleware)->name('sitemap.static');
 Route::get('/sitemap-blog.xml', [SitemapController::class, 'blog'])->withoutMiddleware($statelessMiddleware)->name('sitemap.blog');
 Route::get('/sitemap-categories.xml', [SitemapController::class, 'categories'])->withoutMiddleware($statelessMiddleware)->name('sitemap.categories');
+Route::get('/sitemap-brands.xml', [SitemapController::class, 'brands'])->withoutMiddleware($statelessMiddleware)->name('sitemap.brands');
 Route::get('/sitemap-products-{page}.xml', [SitemapController::class, 'products'])->whereNumber('page')->withoutMiddleware($statelessMiddleware)->name('sitemap.products');
 Route::get('/social-images/products/{product}/{version}.jpg', [SocialImageController::class, 'product'])
     ->whereNumber(['product', 'version'])
@@ -88,6 +89,10 @@ $registerStoreRoutes = function (string $suffix = '') use ($statelessMiddleware)
     Route::post('/admin/category-filters/disable', [StoreController::class, 'disableCategoryFilter'])->middleware('auth')->name($name('catalog.admin.disable-filter'));
     Route::get('/products/'.$publicProduct, [StoreController::class, 'legacyProduct'])->name($name('products.legacy'));
     Route::get('/{rootCategory}/products/'.$publicProduct, [StoreController::class, 'productPath'])->name($name('products.show'));
+    Route::get('/brand', [StoreController::class, 'brands'])->name($name('brands.index'));
+    Route::get('/brand/{brand}', [StoreController::class, 'brand'])
+        ->where('brand', '[A-Za-z0-9\-]+')
+        ->name($name('brands.show'));
     Route::get('/blog', [BlogController::class, 'index'])->name($name('blog.index'));
     Route::get('/blog/{blogPost:slug}', [BlogController::class, 'show'])->name($name('blog.show'));
     Route::get('/pages/{page}', [PageController::class, 'show'])->name($name('pages.show'));

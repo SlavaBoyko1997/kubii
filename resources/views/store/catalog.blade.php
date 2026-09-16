@@ -1,6 +1,6 @@
 @extends('layouts.store')
 
-@section('title', $currentCategory?->filteredSeoTitle($filterHeadingSuffix ?? '') ?? __('Каталог товарів'))
+@section('title', $currentCategory?->filteredSeoTitle($filterHeadingSuffix ?? '') ?? $catalogHeading ?? __('Каталог товарів'))
 
 @push('head')
     @if($products->previousPageUrl())<link rel="prev" href="{{ browser_url($products->previousPageUrl()) }}">@endif
@@ -10,8 +10,14 @@
 
 @section('content')
     <div class="container page-space catalog-page">
-        <div class="breadcrumbs"><a href="{{ localized_route('home') }}">{{ __('Головна') }}</a>@if($currentCategory) @foreach($currentCategory->breadcrumbTrail() as $crumb) / @if($loop->last)<strong>{{ $crumb->name }}</strong>@else<a href="{{ $crumb->catalogUrl(absolute: false) }}">{{ $crumb->name }}</a>@endif @endforeach @endif</div>
-        @if($currentCategory?->parent)
+        <div class="breadcrumbs"><a href="{{ localized_route('home') }}">{{ __('Головна') }}</a>@if($currentBrand ?? null) / <a href="{{ localized_route('brands.index') }}">{{ __('Бренди') }}</a> / <strong>{{ $currentBrand }}</strong>@elseif($currentCategory) @foreach($currentCategory->breadcrumbTrail() as $crumb) / @if($loop->last)<strong>{{ $crumb->name }}</strong>@else<a href="{{ $crumb->catalogUrl(absolute: false) }}">{{ $crumb->name }}</a>@endif @endforeach @endif</div>
+        @if($currentBrand ?? null)
+            <a class="catalog-parent-link" href="{{ localized_route('brands.index') }}">
+                <span aria-hidden="true">←</span>
+                <small>{{ __('Назад до брендів') }}</small>
+                <strong>{{ __('Усі бренди') }}</strong>
+            </a>
+        @elseif($currentCategory?->parent)
             <a class="catalog-parent-link" href="{{ $currentCategory->parent->catalogUrl(absolute: false) }}">
                 <span aria-hidden="true">←</span>
                 <small>{{ __('Назад до розділу') }}</small>

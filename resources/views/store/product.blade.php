@@ -29,7 +29,7 @@
                 <span class="product-category">{{ $product->category->name }}</span>
                 <h1>{{ $product->pageH1() }}</h1>
                 <div class="detail-rating">@include('store._rating', ['rating' => $product->visible_reviews_avg_rating]) <strong>{{ number_format((float) $product->visible_reviews_avg_rating, 1, ',', ' ') }}</strong><a href="#reviews">{{ __('Відгуків: :count', ['count' => $product->visible_reviews_count]) }}</a></div>
-                <div class="product-meta"><span>{{ __('Код товару:') }} <strong>{{ $product->sku }}</strong></span>@if($product->brand)<span>{{ __('Бренд:') }} <strong>{{ $product->brand }}</strong></span>@endif</div>
+                <div class="product-meta"><span>{{ __('Код товару:') }} <strong>{{ $product->sku }}</strong></span>@if($product->brand)<span>{{ __('Бренд:') }} @if($product->brandUrl())<a href="{{ $product->brandUrl(false) }}"><strong>{{ $product->brand }}</strong></a>@else<strong>{{ $product->brand }}</strong>@endif</span>@endif</div>
                 @if($showAdminProductTools ?? false)
                     <div class="product-admin-tools">
                         @if($adminDownloadImagesUrl)

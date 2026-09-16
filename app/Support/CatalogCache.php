@@ -4,6 +4,7 @@ namespace App\Support;
 
 use App\Models\Category;
 use App\Models\Product;
+use App\Support\ProductBrand;
 use Closure;
 use Illuminate\Cache\RedisStore;
 use Illuminate\Support\Collection;
@@ -22,7 +23,7 @@ class CatalogCache
 
     public function menu(): array
     {
-        return $this->remember('menu:v11', function (): array {
+        return $this->remember('menu:v12', function (): array {
             $activeCategories = Category::query()
                 ->where('is_active', true)
                 ->where('name', '!=', 'ІБІС Зброя')
@@ -77,6 +78,7 @@ class CatalogCache
                     ->values();
 
                 return [
+                    'id' => $category->id,
                     'name' => $category->translated('name'),
                     'slug' => $category->translated('slug'),
                     'url' => $categoryPath($category),
@@ -102,7 +104,7 @@ class CatalogCache
      */
     public function homeRootCategories(): array
     {
-        return $this->remember('home-root-categories:v1', function (): array {
+        return $this->remember('home-root-categories:v2', function (): array {
             $counts = $this->categoryProductCounts();
             $locale = Locale::current();
 
@@ -114,6 +116,7 @@ class CatalogCache
                 ->get(['id', 'name', 'name_ru', 'slug', 'slug_ru', 'image_url', 'image_path'])
                 ->filter(fn (Category $category): bool => ($counts[$category->id] ?? 0) > 0)
                 ->map(fn (Category $category): array => [
+                    'id' => $category->id,
                     'name' => $category->translated('name'),
                     'url' => $category->catalogUrl(absolute: false, locale: $locale),
                     'image_src' => $this->categoryImageSrc($category->id),
@@ -293,6 +296,113 @@ class CatalogCache
             }
 
             return compact('canonical', 'legacy');
+        });
+    }
+
+    /**
+     * @return list<array{name: string, slug: string, products_count: int}>
+     */
+    public function brands(): array
+    {
+        return $this->remember('brands:v1', function (): array {
+            $rows = Product::query()
+                ->where('is_active', true)
+                ->visibleInCatalog()
+                ->whereNotNull('brand')
+                ->where('brand', '!=', '')
+                ->selectRaw('brand as name, COUNT(*) as products_count')
+                ->groupBy('brand')
+                ->orderBy('brand')
+                ->get();
+
+            $used = [];
+
+            return $rows->map(function ($row) use (&$used): array {
+                $base = ProductBrand::slug((string) $row->name);
+                $slug = $base;
+                $suffix = 2;
+
+                while (isset($used[$slug])) {
+                    $slug = $base.'-'.$suffix;
+                    $suffix++;
+                }
+
+                $used[$slug] = true;
+
+                return [
+                    'name' => (string) $row->name,
+                    'slug' => $slug,
+                    'products_count' => (int) $row->products_count,
+                ];
+            })->values()->all();
+        });
+    }
+
+    /**
+     * @return array<string, list<array{name: string, slug: string, products_count: int}>>
+     */
+    public function brandGroups(): array
+    {
+        $groups = [];
+
+        foreach ($this->brands() as $brand) {
+            if (! is_array($brand) || ! isset($brand['name'], $brand['slug'])) {
+                continue;
+            }
+
+            $letter = mb_strtoupper(mb_substr((string) $brand['name'], 0, 1));
+            $letter = preg_match('/\p{L}/u', $letter) === 1 ? $letter : '#';
+            $groups[$letter][] = $brand;
+        }
+
+        return $groups;
+    }
+
+    /**
+     * @return array{name: string, slug: string, products_count: int}|null
+     */
+    public function brandBySlug(string $slug): ?array
+    {
+        return $this->brandsBySlug()[$slug] ?? null;
+    }
+
+    /**
+     * @return array{name: string, slug: string, products_count: int}|null
+     */
+    public function brandByName(string $name): ?array
+    {
+        return $this->brandsByName()[mb_strtolower(trim($name))] ?? null;
+    }
+
+    /**
+     * @return array<string, array{name: string, slug: string, products_count: int}>
+     */
+    private function brandsBySlug(): array
+    {
+        return $this->remember('brands-by-slug:v1', function (): array {
+            $index = [];
+
+            foreach ($this->brands() as $brand) {
+                $index[$brand['slug']] = $brand;
+            }
+
+            return $index;
+        });
+    }
+
+    /**
+     * @return array<string, array{name: string, slug: string, products_count: int}>
+     */
+    private function brandsByName(): array
+    {
+        return $this->remember('brands-by-name:v1', function (): array {
+            $index = [];
+
+            foreach ($this->brands() as $brand) {
+                $index[mb_strtolower($brand['name'])] = $brand;
+            }
+
+            return $index;
         });
     }
 

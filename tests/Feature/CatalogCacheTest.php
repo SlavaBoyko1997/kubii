@@ -424,4 +424,68 @@ class CatalogCacheTest extends TestCase
 
         $this->artisan('catalog:cache-warm', ['--fresh' => true])->assertSuccessful();
     }
+
+    public function test_catalog_menu_renders_ibis_style_mega_layout(): void
+    {
+        $root = Category::create([
+            'name' => 'Рибальство',
+            'slug' => 'mega-rybalstvo',
+            'is_active' => true,
+        ]);
+        $child = Category::create([
+            'name' => 'Вудилища',
+            'slug' => 'mega-vudylyshcha',
+            'parent_id' => $root->id,
+            'is_active' => true,
+        ]);
+        $leaf = Category::create([
+            'name' => 'Спінінгові',
+            'slug' => 'mega-spininhovi',
+            'parent_id' => $child->id,
+            'is_active' => true,
+        ]);
+
+        foreach (range(1, 9) as $index) {
+            $extra = Category::create([
+                'name' => 'Додаткова '.$index,
+                'slug' => 'mega-extra-'.$index,
+                'parent_id' => $child->id,
+                'is_active' => true,
+            ]);
+
+            Product::create([
+                'category_id' => $extra->id,
+                'name' => 'Товар '.$index,
+                'slug' => 'mega-extra-product-'.$index,
+                'price' => 800,
+                'stock' => 2,
+                'is_active' => true,
+            ]);
+        }
+
+        Product::create([
+            'category_id' => $leaf->id,
+            'name' => 'Тестове вудилище',
+            'slug' => 'mega-test-rod',
+            'price' => 1200,
+            'stock' => 3,
+            'is_active' => true,
+        ]);
+
+        $this->get('/catalog-menu')
+            ->assertOk()
+            ->assertSee('data-mega-root-mobile="'.$root->id.'"', false)
+            ->assertSee('data-mega-panel="'.$root->id.'"', false)
+            ->assertSee('mega-column-title', false)
+            ->assertDontSee('menu-groups-mobile', false)
+            ->assertSee('Вудилища')
+            ->assertSee('Спінінгові')
+            ->assertSee('data-mega-more', false)
+            ->assertSee('mega-extra', false);
+
+        $this->get('/')
+            ->assertOk()
+            ->assertSee('data-catalog-nav', false)
+            ->assertSee('data-mega-root="'.$root->id.'"', false);
+    }
 }

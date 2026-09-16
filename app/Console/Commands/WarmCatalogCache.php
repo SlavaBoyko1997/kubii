@@ -83,7 +83,8 @@ class WarmCatalogCache extends Command
                 app()->setLocale($locale);
                 $cache->menu();
                 $this->warmHome($cache);
-                $this->components->info("Catalog menu and home selections warmed for {$locale}.");
+                $cache->brands();
+                $this->components->info("Catalog menu, home and brands warmed for {$locale}.");
             }
 
             $categories = Category::query()
@@ -110,7 +111,28 @@ class WarmCatalogCache extends Command
                     ...$pageCategories->map(fn (Category $category): string => $category->catalogUrl(absolute: false, locale: $locale))->all(),
                 ];
             })->unique()->values();
-            $totalSteps = 4 + ($pageCategories->count() * count(Locale::SUPPORTED) * 2) + $paths->count();
+
+            $brandPaths = collect(Locale::SUPPORTED)->flatMap(function (string $locale) use ($cache): array {
+                app()->setLocale($locale);
+
+                return [
+                    localized_route('brands.index', [], false),
+                    ...collect($cache->brands())
+                        ->map(fn (array $brand): string => localized_route('brands.show', $brand['slug'], false))
+                        ->all(),
+                ];
+            })->unique()->values();
+            $paths = $paths->concat($brandPaths)->unique()->values();
+            $brandFilterItems = collect(Locale::SUPPORTED)->flatMap(function (string $locale) use ($cache) {
+                app()->setLocale($locale);
+
+                return collect($cache->brands())->map(fn (array $brand): array => [
+                    'locale' => $locale,
+                    'name' => $brand['name'],
+                    'path' => localized_route('brands.show', $brand['slug'], false),
+                ]);
+            });
+            $totalSteps = 4 + ($pageCategories->count() * count(Locale::SUPPORTED) * 2) + $brandFilterItems->count() + $paths->count();
             $completedSteps = 4;
 
             if (is_string($progressKey) && $progressKey !== '') {
@@ -180,6 +202,42 @@ class WarmCatalogCache extends Command
             $bar->finish();
             $this->newLine(2);
             $this->components->info("Catalog filter HTML cache warmed for {$items->count()} scopes.");
+
+            if ($brandFilterItems->isNotEmpty()) {
+                if (is_string($progressKey) && $progressKey !== '') {
+                    $progress->update($progressKey, 'Готуємо HTML фільтрів брендів', $completedSteps, $totalSteps);
+                }
+
+                $bar = $this->output->createProgressBar($brandFilterItems->count());
+                $bar->start();
+
+                foreach ($brandFilterItems as $item) {
+                    app()->setLocale($item['locale']);
+                    $path = $item['path'].(str_contains($item['path'], '?') ? '&' : '?').'filters_only=1';
+                    $response = $this->warmInternalRequest($kernel, $path, 'application/json');
+
+                    if ($response->getStatusCode() >= 400) {
+                        $this->newLine();
+                        $this->components->warn("Skipped brand filters {$path}: HTTP {$response->getStatusCode()}");
+                    }
+
+                    $bar->advance();
+                    $completedSteps++;
+
+                    if (is_string($progressKey) && $progressKey !== '') {
+                        $progress->update(
+                            $progressKey,
+                            'HTML фільтрів бренда ['.$item['locale'].']: '.$item['name'],
+                            $completedSteps,
+                            $totalSteps,
+                        );
+                    }
+                }
+
+                $bar->finish();
+                $this->newLine(2);
+                $this->components->info("Brand filter HTML cache warmed for {$brandFilterItems->count()} scopes.");
+            }
 
             $this->components->info('Warming public pages and catalog result caches.');
             $bar = $this->output->createProgressBar($paths->count());

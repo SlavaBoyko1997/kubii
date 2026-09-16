@@ -408,16 +408,20 @@ document.querySelectorAll('[data-copy-product-specs]').forEach((button) => {
 
 const closePanels = () => {
     catalog?.classList.remove('is-open');
+    catalog?.removeAttribute('data-mega-locked');
     drawer?.classList.remove('is-open');
     auth?.classList.remove('is-open');
     quickOrder?.classList.remove('is-open');
-    overlay?.classList.remove('is-open');
+    overlay?.classList.remove('is-open', 'is-mega');
     document.body.classList.remove('panel-open');
+    catalogNav?.querySelectorAll('[data-mega-root]').forEach((link) => link.classList.remove('is-current'));
 };
 
 const catalogMenu = catalog?.querySelector('[data-catalog-menu]');
+const catalogNav = document.querySelector('[data-catalog-nav]');
 let catalogMenuRequest = null;
-const catalogMenuVersion = 'drill-v1';
+let megaCloseTimer = null;
+const catalogMenuVersion = 'mega-v6';
 
 const loadCatalogMenu = async () => {
     if (!catalogMenu || !catalogMenuUrl || (catalogMenu.dataset.loaded === 'true' && catalogMenu.dataset.version === catalogMenuVersion)) return;
@@ -427,8 +431,9 @@ const loadCatalogMenu = async () => {
         catalogMenu.dataset.loaded = 'false';
     }
 
-    catalogMenuRequest = fetch(catalogMenuUrl, {
+    catalogMenuRequest = fetch(`${catalogMenuUrl}${catalogMenuUrl.includes('?') ? '&' : '?'}v=${catalogMenuVersion}`, {
         headers: { Accept: 'text/html', 'X-Requested-With': 'XMLHttpRequest' },
+        cache: 'no-store',
     })
         .then((response) => {
             if (!response.ok) throw new Error();
@@ -447,7 +452,72 @@ const loadCatalogMenu = async () => {
     return catalogMenuRequest;
 };
 
+const activateMegaPanel = (slug) => {
+    if (!slug) {
+        slug = catalog?.querySelector('[data-mega-panel]')?.dataset.megaPanel;
+    }
+
+    catalog?.querySelectorAll('[data-mega-panel]').forEach((panel) => {
+        panel.classList.toggle('is-active', panel.dataset.megaPanel === String(slug));
+    });
+    catalog?.querySelectorAll('[data-mega-root-mobile]').forEach((button) => {
+        button.classList.toggle('is-current', button.dataset.megaRootMobile === String(slug));
+    });
+    catalogNav?.querySelectorAll('[data-mega-root]').forEach((link) => {
+        link.classList.toggle('is-current', link.dataset.megaRoot === String(slug));
+    });
+};
+
+const openCatalog = async (slug, { lock = true } = {}) => {
+    cancelMegaClose();
+    drawer?.classList.remove('is-open');
+    auth?.classList.remove('is-open');
+    quickOrder?.classList.remove('is-open');
+    catalog?.classList.add('is-open');
+    overlay?.classList.add('is-open');
+    overlay?.classList.toggle('is-mega', !lock);
+    if (lock) {
+        catalog?.setAttribute('data-mega-locked', 'true');
+        document.body.classList.add('panel-open');
+    } else {
+        catalog?.removeAttribute('data-mega-locked');
+        document.body.classList.remove('panel-open');
+    }
+    await loadCatalogMenu();
+    activateMegaPanel(slug);
+};
+
+const cancelMegaClose = () => {
+    clearTimeout(megaCloseTimer);
+    megaCloseTimer = null;
+};
+
+const scheduleMegaClose = () => {
+    if (catalog?.dataset.megaLocked === 'true') return;
+    megaCloseTimer = setTimeout(() => closePanels(), 180);
+};
+
 catalogMenu?.addEventListener('click', (event) => {
+    const moreButton = event.target.closest('[data-mega-more]');
+
+    if (moreButton) {
+        event.preventDefault();
+        event.stopPropagation();
+        const extra = moreButton.parentElement?.querySelector('.mega-extra');
+        if (extra) extra.hidden = false;
+        moreButton.remove();
+        return;
+    }
+
+    const mobileRoot = event.target.closest('[data-mega-root-mobile]');
+    if (mobileRoot) {
+        event.preventDefault();
+        event.stopPropagation();
+        activateMegaPanel(mobileRoot.dataset.megaRootMobile);
+        if (catalog) catalog.scrollTop = 0;
+        return;
+    }
+
     const drillButton = event.target.closest('[data-menu-drill], .menu-child');
     const backButton = event.target.closest('[data-menu-back]');
 
@@ -498,13 +568,28 @@ const openPanel = (panel) => {
 
 document.addEventListener('click', (event) => {
     if (event.target.closest('[data-open-catalog]')) {
-        openPanel(catalog);
-        loadCatalogMenu();
+        const current = catalogNav?.querySelector('[data-mega-root]')?.dataset.megaRoot;
+        openCatalog(current, { lock: true });
     }
     if (event.target.closest('[data-open-cart]')) openPanel(drawer);
     if (event.target.closest('[data-open-auth]')) openPanel(auth);
     if (event.target.closest('[data-close-catalog], [data-close-cart], [data-close-auth], [data-close-quick-order], [data-overlay]')) closePanels();
 });
+
+catalogNav?.addEventListener('mouseenter', () => {
+    loadCatalogMenu();
+}, { once: true });
+
+catalogNav?.addEventListener('mouseover', (event) => {
+    const root = event.target.closest('[data-mega-root]');
+    if (!root) return;
+    cancelMegaClose();
+    openCatalog(root.dataset.megaRoot, { lock: false });
+});
+
+catalogNav?.addEventListener('mouseleave', scheduleMegaClose);
+catalog?.addEventListener('mouseenter', cancelMegaClose);
+catalog?.addEventListener('mouseleave', scheduleMegaClose);
 
 document.addEventListener('click', (event) => {
     const button = event.target.closest('[data-open-quick-order]');
@@ -2230,4 +2315,23 @@ document.addEventListener('submit', async (event) => {
     } finally {
         setElementLoading(form, false);
     }
+});
+
+const brandSearch = document.querySelector('[data-brand-search]');
+brandSearch?.addEventListener('input', () => {
+    const query = brandSearch.value.trim().toLowerCase();
+    let visible = 0;
+
+    document.querySelectorAll('[data-brand-item]').forEach((item) => {
+        const matches = !query || (item.dataset.brandName || '').includes(query);
+        item.hidden = !matches;
+        if (matches) visible += 1;
+    });
+
+    document.querySelectorAll('.brand-letter-group').forEach((group) => {
+        group.hidden = !group.querySelector('[data-brand-item]:not([hidden])');
+    });
+
+    const empty = document.querySelector('[data-brand-empty]');
+    if (empty) empty.hidden = visible > 0;
 });

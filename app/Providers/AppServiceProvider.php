@@ -89,6 +89,7 @@ class AppServiceProvider extends ServiceProvider
 
             $view->with([
                 'catalogEntryUrl' => $catalogEntryUrl(),
+                'navCategories' => collect(app(CatalogCache::class)->homeRootCategories())->values(),
                 'footerCategories' => collect(app(CatalogCache::class)->homeRootCategories())
                     ->take(10)
                     ->values(),

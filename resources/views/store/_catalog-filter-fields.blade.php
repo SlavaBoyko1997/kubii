@@ -5,6 +5,9 @@
         @case('brand')
             @include('store._filter-options', ['title' => $baseFilterLabels['brand'] ?? __('Бренд'), 'name' => 'brand', 'values' => $availableBrands, 'selected' => $selectedBrands, 'searchPlaceholder' => __('Пошук по бренду'), 'trackingKey' => 'brand'])
             @break
+        @case('catalog_category')
+            @include('store._filter-options', ['title' => $baseFilterLabels['catalog_category'] ?? __('Категорія'), 'name' => 'catalog_category', 'values' => $availableCatalogCategories ?? [], 'selected' => $selectedCatalogCategories ?? [], 'searchPlaceholder' => __('Пошук по категорії'), 'trackingKey' => 'catalog_category'])
+            @break
         @case('model')
             @include('store._filter-options', ['title' => $baseFilterLabels['model'] ?? __('Модель'), 'name' => 'model', 'values' => $availableModels, 'selected' => $selectedModels, 'trackingKey' => 'model'])
             @break

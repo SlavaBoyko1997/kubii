@@ -298,6 +298,23 @@ class Product extends Model
         return $absolute ? url($path) : $path;
     }
 
+    public function brandUrl(bool $absolute = true, ?string $locale = null): ?string
+    {
+        $name = trim((string) $this->brand);
+
+        if ($name === '') {
+            return null;
+        }
+
+        $brand = app(CatalogCache::class)->brandByName($name);
+
+        if (! $brand) {
+            return null;
+        }
+
+        return Locale::route('brands.show', ['brand' => $brand['slug']], $absolute, $locale);
+    }
+
     public function resolveRouteBinding($value, $field = null): ?self
     {
         $column = $field ?: $this->getRouteKeyName();

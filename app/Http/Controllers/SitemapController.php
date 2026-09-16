@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\BlogPost;
 use App\Models\Category;
 use App\Models\Product;
+use App\Support\CatalogCache;
 use App\Support\Locale;
 use Illuminate\Http\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -31,6 +32,7 @@ class SitemapController extends Controller
             route('sitemap.static'),
             route('sitemap.blog'),
             route('sitemap.categories'),
+            route('sitemap.brands'),
         ];
 
         for ($page = 1; $page <= $productSitemaps; $page++) {
@@ -50,6 +52,7 @@ class SitemapController extends Controller
         $pages = [
             ['home', [], 'daily', '1.0'],
             ['blog.index', [], 'daily', '0.7'],
+            ['brands.index', [], 'weekly', '0.6'],
             ['pages.show', 'about', 'monthly', '0.5'],
             ['pages.show', 'delivery', 'monthly', '0.5'],
             ['pages.show', 'returns', 'monthly', '0.5'],
@@ -109,6 +112,25 @@ class SitemapController extends Controller
 
                 return collect(Locale::SUPPORTED)->map(fn (string $locale): array => [
                     $alternates[$locale], $category->updated_at, 'daily', '0.8', $alternates,
+                ])->all();
+            })
+            ->all();
+
+        return $this->urlset($urls);
+    }
+
+    public function brands(): Response
+    {
+        $brands = app(CatalogCache::class)->brands();
+        $urls = collect($brands)
+            ->flatMap(function (array $brand): array {
+                $alternates = [
+                    'uk' => Locale::route('brands.show', $brand['slug'], locale: 'uk'),
+                    'ru' => Locale::route('brands.show', $brand['slug'], locale: 'ru'),
+                ];
+
+                return collect(Locale::SUPPORTED)->map(fn (string $locale): array => [
+                    $alternates[$locale], now(), 'weekly', '0.6', $alternates,
                 ])->all();
             })
             ->all();
