@@ -89,6 +89,9 @@ class AppServiceProvider extends ServiceProvider
 
             $view->with([
                 'catalogEntryUrl' => $catalogEntryUrl(),
+                'footerCategories' => collect(app(CatalogCache::class)->homeRootCategories())
+                    ->take(10)
+                    ->values(),
                 'drawerItems' => $cart->items(),
                 'drawerTotal' => $cart->total(),
                 'cartCount' => $cart->count(),

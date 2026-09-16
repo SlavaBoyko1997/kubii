@@ -249,7 +249,7 @@
         .order-items-panel__total strong {
             color: var(--order-items-text);
             font-size: 22px;
-            font-weight: 900;
+            font-weight: 700;
         }
 
         @media (min-width: 960px) {

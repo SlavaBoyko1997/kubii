@@ -252,7 +252,15 @@
 
     <footer class="site-footer">
         <div class="container footer-grid">
-            <div><a class="footer-brand" href="{{ localized_route('home') }}" aria-label="BASH">@include('store._logo')</a><p>{{ __('Спорядження для туризму, кемпінгу та риболовлі з доставкою по Україні.') }}</p><p>@if(\App\Support\StoreInfo::email())<a href="mailto:{{ \App\Support\StoreInfo::email() }}">{{ \App\Support\StoreInfo::email() }}</a><br>@endif{{ \App\Support\StoreInfo::schedule() }}</p><p class="footer-social-label">{{ __('Ми в соцмережах') }}</p>@include('store._social-links', ['class' => 'footer-social'])</div>
+            <div><a class="footer-brand" href="{{ localized_route('home') }}" aria-label="BASH">@include('store._logo')</a><p class="footer-tagline">{{ __('Спорядження для туризму, кемпінгу та риболовлі з доставкою по Україні.') }}</p><p>@if(\App\Support\StoreInfo::email())<a href="mailto:{{ \App\Support\StoreInfo::email() }}">{{ \App\Support\StoreInfo::email() }}</a><br>@endif{{ \App\Support\StoreInfo::schedule() }}</p><p class="footer-social-label">{{ __('Ми в соцмережах') }}</p>@include('store._social-links', ['class' => 'footer-social'])</div>
+            @if(($footerCategories ?? collect())->isNotEmpty())
+                <div>
+                    <h3>{{ __('Категорії товарів') }}</h3>
+                    @foreach($footerCategories as $footerCategory)
+                        <a href="{{ $footerCategory['url'] }}">{{ $footerCategory['name'] }}</a>
+                    @endforeach
+                </div>
+            @endif
             <div><h3>{{ __('Покупцям') }}</h3><a href="{{ localized_route('pages.show', 'delivery') }}">{{ __('Доставка і оплата') }}</a><a href="{{ localized_route('pages.show', 'returns') }}">{{ __('Обмін і повернення') }}</a><a href="{{ localized_route('pages.show', 'warranty') }}">{{ __('Гарантія') }}</a><a href="{{ $catalogEntryUrl }}">{{ __('Каталог товарів') }}</a></div>
             <div><h3>{{ __('Інформація') }}</h3><a href="{{ localized_route('pages.show', 'about') }}">{{ __('Про компанію') }}</a><a href="{{ localized_route('blog.index') }}">{{ __('Блог') }}</a><a href="{{ localized_route('pages.show', 'contacts') }}">{{ __('Контакти та реквізити') }}</a><a href="{{ localized_route('pages.show', 'offer') }}">{{ __('Публічна оферта') }}</a><a href="{{ localized_route('pages.show', 'privacy') }}">{{ __('Політика конфіденційності') }}</a></div>
             <div><h3>{{ __('Особистий кабінет') }}</h3>@auth<a href="{{ localized_route('account.index') }}">{{ __('Мої замовлення') }}</a>@else<a href="{{ localized_route('login') }}">{{ __('Увійти') }}</a><a href="{{ localized_route('register') }}">{{ __('Зареєструватися') }}</a>@endauth</div>
