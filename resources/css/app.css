@@ -412,8 +412,8 @@ body:has(.cart-drawer.is-open) .showcase-category-card {
 .popup-head span, .drawer-head span, .auth-kicker { color: var(--gold-700); font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
 .popup-head h2, .drawer-head h2 { margin: 4px 0 0; font-size: 24px; }
 .popup-head button, .drawer-head button { border: 0; background: transparent; color: #64715d; font-size: 29px; line-height: 1; }
-.popup-categories { display: flex; flex: 1; flex-direction: column; min-height: 0; margin: 0; overflow: auto; overscroll-behavior: contain; }
-.mega-brands { flex-shrink: 0; margin-top: auto; overflow: hidden; border-top: 1px solid var(--line); background: #fff; }
+.popup-categories { display: flex; flex: 1; flex-direction: column; min-height: 0; margin: 0; overflow: hidden; overscroll-behavior: contain; }
+.mega-brands { flex-shrink: 0; margin-top: auto; overflow: hidden; border-top: 1px solid var(--line); background: #fff; z-index: 2; }
 .mega-brands-track { display: flex; width: max-content; align-items: center; gap: 8px; padding: 10px 16px; animation: mega-brands-marquee 42s linear infinite; }
 .mega-brands:hover .mega-brands-track { animation-play-state: paused; }
 .mega-brands a { flex-shrink: 0; display: inline-flex !important; width: auto; align-items: center; justify-content: center; min-width: 92px; min-height: 40px; border: 0 !important; border-radius: 0 !important; padding: 0 16px !important; background: transparent !important; color: var(--forest-900); font-size: 13px; font-weight: 800; letter-spacing: .04em; line-height: 1; text-transform: uppercase; transform: none !important; white-space: nowrap; }
@@ -427,7 +427,7 @@ body:has(.cart-drawer.is-open) .showcase-category-card {
     .mega-brands-track { animation: none; }
 }
 .mega-roots { display: none; }
-.mega-desktop { flex: 1; min-height: 0; }
+.mega-desktop { flex: 1; min-height: 0; overflow: auto; overscroll-behavior: contain; }
 .mega-aside { display: none !important; }
 .mega-panel { display: none; }
 .mega-panel.is-active { display: block; }
@@ -1536,8 +1536,8 @@ form.is-loading[data-cart-quantity-form] [data-quantity-change] { opacity: .55; 
     .catalog-popup .popup-head span { display: none; }
     .catalog-popup .popup-head h2 { margin: 0; font-size: 17px; }
     .catalog-popup .popup-all { display: none; }
-    .mega-desktop { display: block; flex: 1; min-height: 0; }
-    .mega-roots { position: sticky; top: 49px; z-index: 2; display: flex; gap: 8px; overflow-x: auto; padding: 10px 16px 12px; background: #fff; border-bottom: 1px solid var(--line); scrollbar-width: none; }
+    .mega-desktop { display: block; flex: 1; min-height: 0; overflow: auto; }
+    .mega-roots { flex-shrink: 0; position: relative; top: auto; z-index: 2; display: flex; gap: 8px; overflow-x: auto; padding: 10px 16px 12px; background: #fff; border-bottom: 1px solid var(--line); scrollbar-width: none; }
     .mega-roots::-webkit-scrollbar { display: none; }
     .mega-roots button { flex-shrink: 0; display: inline-flex !important; width: auto; align-items: center; gap: 0; border: 1px solid var(--line) !important; border-radius: 999px !important; padding: 9px 13px !important; background: #fff !important; color: var(--ink); font-size: 11px; font-weight: 600; letter-spacing: .04em; line-height: 1; text-transform: uppercase; transform: none !important; }
     .mega-roots button.is-current { border-color: var(--forest-900) !important; background: var(--forest-900) !important; color: #fff; }
@@ -1551,7 +1551,7 @@ form.is-loading[data-cart-quantity-form] [data-quantity-change] { opacity: .55; 
     .mega-brands-track { gap: 4px; padding: 8px 12px; animation-duration: 36s; }
     .mega-brands a { min-width: 78px; min-height: 36px; padding: 0 12px !important; font-size: 12px; }
     .menu-groups-mobile { display: none; }
-    .popup-categories { display: flex; }
+    .popup-categories { display: flex; overflow: hidden; }
     .menu-group { margin-top: 12px; border: 0; padding: 0; background: transparent; }
     .menu-parent { display: flex; gap: 8px; align-items: center; border-bottom: 1px solid #e3e9e0 !important; padding: 7px !important; }
     .menu-parent-media { width: 52px; height: 46px; border-radius: 7px; }
