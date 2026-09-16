@@ -228,6 +228,43 @@ class LocalizationTest extends TestCase
         $this->assertFalse($product->is_active);
     }
 
+    public function test_ibis_category_slugs_do_not_include_counterparty_prefix(): void
+    {
+        $counterparty = \App\Models\Counterparty::query()->where('slug', 'ibis-gear')->firstOrFail();
+
+        app(IbisFeedImporter::class)->importCounterpartyFile(
+            $counterparty,
+            base_path('tests/Fixtures/ibis-feed.xml'),
+        );
+
+        $category = Category::query()->where('name', 'Намети')->firstOrFail();
+
+        $this->assertStringStartsNotWith('ibis-gear-', $category->getRawOriginal('slug'));
+        $this->assertStringStartsNotWith('ibis-gear-', $category->publicSlug());
+        $this->assertStringNotContainsString('/ibis-gear-', $category->catalogUrl());
+    }
+
+    public function test_ibis_repeat_import_does_not_hide_published_products(): void
+    {
+        $counterparty = \App\Models\Counterparty::query()->where('slug', 'ibis-gear')->firstOrFail();
+        $importer = app(IbisFeedImporter::class);
+        $file = base_path('tests/Fixtures/ibis-feed.xml');
+
+        $importer->importCounterpartyFile($counterparty, $file);
+
+        $product = Product::query()->where('external_id', '12271354')->firstOrFail();
+        $product->update([
+            'is_processed' => true,
+            'is_active' => true,
+        ]);
+
+        $importer->importCounterpartyFile($counterparty, $file);
+
+        $product->refresh();
+        $this->assertTrue($product->is_processed);
+        $this->assertTrue($product->is_active);
+    }
+
     public function test_old_product_slug_redirects_to_the_clean_slug(): void
     {
         $category = Category::create([

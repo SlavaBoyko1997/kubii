@@ -116,11 +116,6 @@ class IbisFeedImporter
         if ($replace) {
             Product::query()->delete();
             Category::withTrashed()->forceDelete();
-        } else {
-            Product::query()
-                ->where('source', $this->source())
-                ->where('is_processed', true)
-                ->update(['is_active' => false]);
         }
 
         $this->existingProductSlugs = Product::query()
@@ -384,8 +379,8 @@ class IbisFeedImporter
             $partRu = $partsRu->get($index) ?: $part;
 
             if (! isset($this->categories[$key])) {
-                $slug = $this->categorySlug($this->counterparty ? [$this->source(), ...$path] : $path);
                 $externalId = sha1($key);
+                $slug = $this->allocateCategorySlug($path);
                 $category = $this->counterparty
                     ? Category::withTrashed()->firstOrCreate(
                         [
@@ -412,24 +407,32 @@ class IbisFeedImporter
                         ],
                     );
 
+                $slug = $this->allocateCategorySlug($path, (int) $category->id);
+                $updates = [];
+
+                if ($category->getRawOriginal('slug') !== $slug) {
+                    $updates['slug'] = $slug;
+                    $updates['slug_ru'] = $slug;
+                }
+
                 if (! $category->getRawOriginal('name_ru')) {
-                    $category->update([
-                        'name_ru' => $partRu,
-                        'slug_ru' => $slug,
-                        ...($this->counterparty ? [
-                            'name' => $part,
-                            'parent_id' => $parentId,
-                        ] : []),
-                    ]);
+                    $updates['name_ru'] = $partRu;
+                    $updates['slug_ru'] = $slug;
+                    if ($this->counterparty) {
+                        $updates['name'] = $part;
+                        $updates['parent_id'] = $parentId;
+                    }
                 } elseif ($category->getRawOriginal('slug_ru') !== $slug) {
-                    $category->update([
-                        'slug_ru' => $slug,
-                        ...($this->counterparty ? [
-                            'name' => $part,
-                            'name_ru' => $partRu,
-                            'parent_id' => $parentId,
-                        ] : []),
-                    ]);
+                    $updates['slug_ru'] = $slug;
+                    if ($this->counterparty) {
+                        $updates['name'] = $part;
+                        $updates['name_ru'] = $partRu;
+                        $updates['parent_id'] = $parentId;
+                    }
+                }
+
+                if ($updates !== []) {
+                    $category->update($updates);
                 }
 
                 $this->categories[$key] = $category;
@@ -461,11 +464,31 @@ class IbisFeedImporter
         return $parts->isEmpty() ? collect(['Інше']) : $parts;
     }
 
+    private function allocateCategorySlug(array $path, ?int $ignoreId = null): string
+    {
+        $base = $this->categorySlug($path);
+        $slug = $base;
+        $suffix = 2;
+
+        while (
+            Category::withTrashed()
+                ->where('slug', $slug)
+                ->when($ignoreId, fn ($query) => $query->where('id', '!=', $ignoreId))
+                ->exists()
+        ) {
+            $slug = Str::limit($base, 220 - strlen((string) $suffix), '').'-'.$suffix;
+            $suffix++;
+        }
+
+        return $slug;
+    }
+
     private function categorySlug(array $path): string
     {
-        $slug = Str::slug(implode('-', $path));
+        $visible = Str::slug(implode('-', $path)) ?: 'category';
+        $identity = ($this->counterparty?->id ? $this->source().'|' : '').implode('|', $path);
 
-        return Str::limit($slug, 210, '').'-'.substr(sha1(implode('|', $path)), 0, 10);
+        return Str::limit($visible, 210, '').'-'.substr(sha1($identity), 0, 10);
     }
 
     private function productSlug(string $name, string $externalId): string
