@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE yml_catalog SYSTEM "shops.dtd">
+<yml_catalog date="2026-07-03 03:46">
+ <shop>
+  <currencies>
+   <currency id="UAH" rate="1"/>
+  </currencies>
+  <categories>
+   <category id="1065">Каремати та сидушки</category>
+   <category id="1124" parentId="1065">Каремати розкладні</category>
+   <category id="1516" parentId="1146">HD</category>
+   <category id="1146" parentId="1144">Навушники</category>
+   <category id="1144">Шоломи та аксесуари </category>
+  </categories>
+  <offers>
+<offer id="689" group_id="77455" available="true">
+    <url>https://tactic-shop.in.ua/ru/turystychnyi-siryi-kylymokkaremat-pid-spalnyi-mishok/</url>
+    <price>520</price>
+    <currencyId>UAH</currencyId>
+    <categoryId>1124</categoryId>
+    <picture>https://tactic-shop.in.ua/content/images/40/kylymok-turystychnyi-karemat-u-namet-ta-pid-spalnyi-mishok-93772643510126_+8f49630c49.png</picture>
+    <picture>https://tactic-shop.in.ua/content/images/40/kylymok-turystychnyi-karemat-u-namet-ta-pid-spalnyi-mishok-57519268183152_+d12164db13.png</picture>
+    <picture>https://tactic-shop.in.ua/content/images/40/kylymok-turystychnyi-karemat-u-namet-ta-pid-spalnyi-mishok-25702883917947_+a990828b57.png</picture>
+    <picture>https://tactic-shop.in.ua/content/images/40/kylymok-turystychnyi-karemat-u-namet-ta-pid-spalnyi-mishok-87799614478279_+e277a53f9e.png</picture>
+    <picture>https://tactic-shop.in.ua/content/images/40/kylymok-turystychnyi-karemat-u-namet-ta-pid-spalnyi-mishok-47252001281843_+cb5dc97e59.png</picture>
+    <vendorCode>8700</vendorCode>
+    <vendor>Kiborg</vendor>
+    <name><![CDATA[Туристический серый коврик (каремат) под спальный мешок]]></name>
+    <description><![CDATA[<p>Спальный коврик изготовлен из полифома который обеспечивает мягкость, элестичность и теплоизоляцию. Имеет размер 0,6 х 1,95 м и толщину 10 мм. Цвет коврика - серый. Это универсальный аксессуар, предназначенный для использования как внутри помещений, так и на открытом воздухе. Предназначен для военных, туризма, отдыха и занятий спортом</p>    <p><strong>Преимущества:</strong></p>    <ol>   <li>   <p><strong>Влагоотталкивающие свойства:</strong> Коврик не впитывает воду и не допускает ее проникновения, что обеспечивает сухость и комфорт в условиях повышенной влаги.</p>   </li>   <li>   <p><strong>Рулонный дизайн: </strong>Коврик можно легко скручивать, что делает его компактным и удобным для транспортировки и хранения.</p>   </li>   <li>   <p><strong>Антибактериальные и антиаллергенные свойства:</strong> Легко моется и чистится нейтральными моющими средствами, что обеспечивает гигиеничность и безопасность для здоровья.</p>   </li>   <li>   <p><strong>Химическая устойчивость: </strong>Прочный к агрессивным средам, таким как бензин, масла, ацетон, цементно-песчаные смеси.</p>   </li>   <li>   <p><strong>Долговечность:</strong> Коврик обладает высокой износостойкостью, что обеспечивает длительное использование в различных условиях.</p>   </li>  </ol>  ]]></description>
+    <name_ua><![CDATA[Туристичний сірий килимок(каремат) під спальний мішок]]></name_ua>
+    <description_ua><![CDATA[<p>Спальний килимок виготовлений з поліфому який забезпечує мягкість, елестичність та теплоізоляцію. Має розмір 0,6 х 1,95 м та товщину 10 мм. Колір килимка &ndash; сірий. Це універсальний аксесуар, призначений для використання як усередині приміщень, так і на відкритому повітрі. Призначений для військових, туризму, відпочинку та занять спортом</p>    <p><strong>Переваги:</strong></p>    <ol>   <li>   <p><strong>Вологовідштовхувальні властивості:</strong> Килимок не вбирає воду і не допускає її проникнення, що забезпечує сухість та комфорт в умовах підвищеної вологи.</p>   </li>   <li>   <p><strong>Рулонний дизайн:</strong> Килимок можна легко скручувати, що робить його компактним і зручним для транспортування та зберігання.</p>   </li>   <li>   <p><strong>Антибактеріальні та антиалергенні властивості:</strong> Легко миється та чиститься нейтральними миючими засобами, що забезпечує гігієнічність та безпеку для здоров&#39;я.</p>   </li>   <li>   <p><strong>Хімічна стійкість:</strong> Міцний до агресивних середовищ, таких як бензин, масла, ацетон, цементно-піщані суміші.</p>   </li>   <li>   <p><strong>Довговічність:</strong> Килимок має високу зносостійкість, що забезпечує тривале використання в різних умовах.</p>   </li>  </ol>  ]]></description_ua>
+    <param name="Цвет">Сірий</param>
+    <param name="Страна производитель">Украина</param>
+    <param name="Цвет">Серый</param>
+    <param name="Тип">Каремат</param>
+    <param name="Узоры и принты">Без узора и принта</param>
+    <param name="Вид изделия">Каремат</param>
+    <param name="Длина ">1,95 м</param>
+    <param name="Ширина ">0,6 м</param>
+   </offer>
+<offer id="2069" group_id="2069455" available="">
+    <url>https://tactic-shop.in.ua/ru/aktyvni-navushnyky-hd-16-koiot/</url>
+    <oldprice>5100</oldprice>
+    <price>4800</price>
+    <currencyId>UAH</currencyId>
+    <categoryId>1516</categoryId>
+    <picture>https://tactic-shop.in.ua/content/images/20/50194999010081_+72f07f4576.jpeg</picture>
+    <picture>https://tactic-shop.in.ua/content/images/20/41138237943088_+349359f87c.jpeg</picture>
+    <picture>https://tactic-shop.in.ua/content/images/20/16136790796237_+a99045dd68.jpeg</picture>
+    <picture>https://tactic-shop.in.ua/content/images/20/33560153368792_+f80aea342a.jpeg</picture>
+    <picture>https://tactic-shop.in.ua/content/images/20/42443035036519_+14080a6d01.jpeg</picture>
+    <picture>https://tactic-shop.in.ua/content/images/20/30121770202349_+a332ba0994.jpeg</picture>
+    <vendorCode>7047-К</vendorCode>
+    <vendor>HD-16</vendor>
+    <name><![CDATA[Тактические активные наушники HD-16 Coyote]]></name>
+    <description><![CDATA[<p><strong>Тактические активные наушники HD-16 Coyote </strong>- активные тактические наушники, обеспечивающие защиту слуха от громких взрывов и выстрелов. Оснащены несколькими микрофонами и динамиками для точного определения направления звука. Система динамического отслеживания устраняет посторонние шумы и усиливает голос собеседника, обеспечивая четкое общение даже в шумных условиях.</p> <p>Встроенная гарнитура позволяет подключаться к радиостанции через интерфейс NATO Nexus TP120.</p> <p><strong>Для полноценной работы необходима отдельная кнопка PTT, доступная для различных разъемов, в частности: </strong>Kenwood 2pin, Moto 1pin, Moto 2pin, Moto DP series, Yeasu, ICOM 2pin, Midland 2pin, TopCom и 3.5MM AUX.</p> <p>Наушники можно носить на голове или закреплять на шлеме благодаря адаптерам крепления &laquo;чебурашки&raquo;. Корпус изготовлен из прочного 3 мм поликарбоната, имеет защиту от влаги и пыли по стандарту IPX5. Встроенный модуль Bluetooth обеспечивает возможность подключения к телефону.</p> <p>Комплектация включает дужку для ношения, адаптеры для крепления на шлем и прочный кейс для хранения и транспортировки.</p>]]></description>
+    <name_ua><![CDATA[Тактичні активні навушники HD-16 Coyote]]></name_ua>
+    <description_ua><![CDATA[<p><strong>HD-16</strong> &ndash; це активні навушники, які забезпечують надійний захист слуху та комфорт під час використання в польових умовах. Вони оснащені сучасними технологіями для забезпечення чіткої комунікації та зручності.</p> <p><strong>Комплектація:</strong> Навушники постачаються з дужкою для носіння на голові та адаптером кріплення "чебурашки" для використання зі шоломом. Все це упаковано в щільний кейс для зберігання та транспортування.</p> <p><strong>Характеристики:</strong></p> <ul> <li>Захист для вух активне шумопоглинання, яке пригнічує будь-який шкідливий шум вище 82 дБ.</li> <li>Чіткість звуку кілька мікрофонів точно визначають напрямок звуку, а динамічне відстеження голосу підсилює його для комфортного спілкування.</li> <li>Універсальність можливість підключення до радіостанцій через вбудовану гарнітуру. Водонепроникні та пилозахищені за стандартом IPX-5.</li> <li>Комфортне носіння можуть використовуватися на голові або в парі зі шоломом. Виготовлені з міцного 3 мм полікарбонату.</li> <li>Bluetooth підключення до телефону для додаткової зручності.</li> </ul> <h4>Особливості:</h4> <ul> <li><strong>Кнопка "Натисни і говори":</strong> Дозволяє спілкуватися з іншими учасниками команди без зайвих зусиль.</li> <li><strong>Підключення до радіостанцій:</strong> Для повноцінної роботи потрібен окремий PTT (натисніть, щоб говорити) адаптер зі стандартом NATO Nexus TP120.</li> <li><strong>Є кнопки PTT для різних роз&rsquo;ємів:</strong> Kenwood 2pin; Moto 1pin; Moto 2pin; Moto DP series; Yeasu; ICOM 2pin; Midland 2pin; TopCom; 3.5MM AUX</li> <li><strong>Різновиди PTT:</strong> Доступні з дублюючою кнопкою під палець та без неї.</li> </ul>]]></description_ua>
+    <param name="Цвет">Койот</param>
+    <param name="Цвет">Койот</param>
+    <param name="Страна производитель">Тайвань</param>
+    <param name="Система крепления">Адаптер крепления &quot;чебурашки&quot;</param>
+    <param name="Тип">Комплект</param>
+    <param name="Узоры и принты">Без узора и принта</param>
+    <param name="Категории">Для військових</param>
+    <param name="Место защиты">Уши</param>
+    <param name="Назначение">Для защиты</param>
+   </offer>
+  </offers>
+ </shop>
+</yml_catalog>

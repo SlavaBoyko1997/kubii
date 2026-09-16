@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:g="http://base.google.com/ns/1.0">
+    <channel>
+        <item group_id="5308">
+            <g:id>12271354</g:id>
+            <g:image_link>https://example.com/tent-main.jpg</g:image_link>
+            <g:image_link>https://example.com/tent-gallery.jpg</g:image_link>
+            <g:brand>Naturehike</g:brand>
+            <g:title>Намет Naturehike Cloud Up</g:title>
+            <g:price>5000.00 UAH</g:price>
+            <g:sale_price>4250.00 UAH</g:sale_price>
+            <g:link>https://example.com/cloud-up</g:link>
+            <g:google_product_category>ІБІС Риболовля &gt; Спорядження &gt; Бівак &gt; Намети</g:google_product_category>
+            <g:description>&lt;p&gt;Легкий туристичний намет.&lt;/p&gt;</g:description>
+            <g:prop value_ua="Cloud Up" name_ua="Модель">Cloud Up</g:prop>
+            <g:prop value_ua="Літо" name_ua="Сезон">Літо</g:prop>
+            <g:prop value_ua="Нейлон" name_ua="Матеріал">Нейлон</g:prop>
+            <g:prop value_ua="1800" name_ua="Маса, г">1800</g:prop>
+            <g:availability>1</g:availability>
+        </item>
+        <item group_id="5309">
+            <g:id>12271355</g:id>
+            <g:image_link>https://example.com/chair.jpg</g:image_link>
+            <g:brand>Tramp</g:brand>
+            <g:title>Крісло складне Tramp</g:title>
+            <g:price>1200.00 UAH</g:price>
+            <g:link>https://example.com/chair</g:link>
+            <g:google_product_category>ІБІС Риболовля &gt; Спорядження &gt; Бівак &gt; Меблі</g:google_product_category>
+            <g:description>&lt;p&gt;Крісло для кемпінгу.&lt;/p&gt;</g:description>
+            <g:availability>0</g:availability>
+        </item>
+    </channel>
+</rss>

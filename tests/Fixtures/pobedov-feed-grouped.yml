@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE yml_catalog SYSTEM "shops.dtd">
+<yml_catalog date="2026-06-24 13:00">
+    <shop>
+        <currencies>
+            <currency id="UAH" rate="1"/>
+        </currencies>
+        <categories>
+            <category id="26">Чоловічі футболки та майки</category>
+        </categories>
+        <offers>
+            <offer id="00000006297" available="true" group_id="229771">
+                <name>Футболка мужская Pobedov XL</name>
+                <name_ua>Футболка чоловіча Pobedov XL</name_ua>
+                <categoryId>26</categoryId>
+                <price>650</price>
+                <currencyId>UAH</currencyId>
+                <picture>https://example.test/pobedov-xl.jpg</picture>
+                <quantity_in_stock>11</quantity_in_stock>
+                <param name="Международный размер">XXXL</param>
+                <param name="Цвет">Темно-синий</param>
+            </offer>
+            <offer id="00000007194" available="true" group_id="229771">
+                <name>Футболка мужская Pobedov L</name>
+                <name_ua>Футболка чоловіча Pobedov L</name_ua>
+                <categoryId>26</categoryId>
+                <price>640</price>
+                <currencyId>UAH</currencyId>
+                <picture>https://example.test/pobedov-l.jpg</picture>
+                <quantity_in_stock>5</quantity_in_stock>
+                <param name="Международный размер">L</param>
+                <param name="Цвет">Темно-синий</param>
+            </offer>
+        </offers>
+    </shop>
+</yml_catalog>

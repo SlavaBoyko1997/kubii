@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE yml_catalog SYSTEM "shops.dtd">
+<yml_catalog date="2026-08-12 16:45">
+    <shop>
+        <name></name>
+        <company></company>
+        <platform>Opencart</platform>
+        <url>https://opt.travel-extreme.com.ua/</url>
+        <currencies>
+            <currency id="UAH" rate="1"/>
+        </currencies>
+        <categories>
+            <category id="1">FM Системи приготування їжі</category>
+            <category id="57">FRITSCHI</category>
+            <category id="54" parentId="57">DIAMIR</category>
+        </categories>
+        <offers>
+            <offer id="FMS X1" available="true">
+                <name>FM X1 Black Інтегрований набір посуду для приготування їжі</name>
+                <url>https://opt.travel-extreme.com.ua/index.php?route=product/product&amp;path=1&amp;product_id=1</url>
+                <price>1650</price>
+                <currencyId>UAH</currencyId>
+                <categoryId>1</categoryId>
+                <picture>https://opt.travel-extreme.com.ua/image/import_files/e1/fms-x1-main.jpg</picture>
+                <picture>https://opt.travel-extreme.com.ua/image/import_files/e1/fms-x1-gallery.jpg</picture>
+                <vendor></vendor>
+                <stock_quantity>446</stock_quantity>
+                <description><![CDATA[Інтегрована система приготування їжі FireMaple X1. Вага 511 г.]]></description>
+            </offer>
+            <offer id="FMS X2R" available="false">
+                <name>FM X2 orange система для приготування</name>
+                <url>https://opt.travel-extreme.com.ua/index.php?route=product/product&amp;path=1&amp;product_id=2</url>
+                <price>2175</price>
+                <currencyId>UAH</currencyId>
+                <categoryId>1</categoryId>
+                <picture>https://opt.travel-extreme.com.ua/image/no_image.png</picture>
+                <vendor></vendor>
+                <stock_quantity>0</stock_quantity>
+                <description><![CDATA[Інтегрована система для приготування їжі Fire Maple X2.]]></description>
+            </offer>
+            <offer id="" available="true">
+                <name>Палиці для скітуру Ski Trab Gavia 18</name>
+                <url>https://opt.travel-extreme.com.ua/index.php?route=product/product&amp;path=7&amp;product_id=4617</url>
+                <price>3360</price>
+                <currencyId>UAH</currencyId>
+                <categoryId>54</categoryId>
+                <picture>https://opt.travel-extreme.com.ua/image/import_files/b8/ski-trab-gavia-18.png</picture>
+                <vendor></vendor>
+                <stock_quantity>10</stock_quantity>
+                <description><![CDATA[Ski Trab Gavia 18 - це 2-секційні палиці для скітуру.]]></description>
+            </offer>
+        </offers>
+    </shop>
+</yml_catalog>

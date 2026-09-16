@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE yml_catalog SYSTEM "shops.dtd">
+<yml_catalog date="2026-06-25 15:10">
+    <shop>
+        <name>camotec-gurt</name>
+        <currencies>
+            <currency id="UAH" rate="1" plus="0"/>
+        </currencies>
+        <categories>
+            <category id="3">Одяг</category>
+            <category id="62" parentId="3">Поло</category>
+        </categories>
+        <offers>
+            <offer id="6160" group_id="1696" groupId="1696" available="true" in_stock="true">
+                <name>Поло Army ID Олива (7045), S</name>
+                <url>https://gurt.camotec.ua/offer/polo-army-id-oliva-7045-o1696/</url>
+                <categoryId>62</categoryId>
+                <currencyId>UAH</currencyId>
+                <sizeTitle>S</sizeTitle>
+                <colorTitle>Олива</colorTitle>
+                <price>960</price>
+                <picture>https://cdn1.komiz.io/41505149/share/data/polo-army-id-oliva-7045-2055.png</picture>
+                <picture>https://cdn1.komiz.io/41505149/share/data/polo-army-id-oliva-7045-5393.png</picture>
+                <vendor>Без марки</vendor>
+                <vendorCode>7045(S)</vendorCode>
+                <barcode>2908010154769</barcode>
+                <quantityStatus>1</quantityStatus>
+                <description><![CDATA[<p>Поло Army ID Олива для весна/літо.</p>]]></description>
+                <param name="Колір">Олива</param>
+                <param name="Сезон">Літо, Весна</param>
+                <param name="Розмір">S</param>
+            </offer>
+            <offer id="6161" group_id="1696" groupId="1696" available="false" in_stock="false">
+                <name>Поло Army ID Олива (7045), M</name>
+                <url>https://gurt.camotec.ua/offer/polo-army-id-oliva-7045-o1696/</url>
+                <categoryId>62</categoryId>
+                <currencyId>UAH</currencyId>
+                <sizeTitle>M</sizeTitle>
+                <colorTitle>Олива</colorTitle>
+                <price>960</price>
+                <picture>https://cdn1.komiz.io/41505149/share/data/polo-army-id-oliva-7045-2055.png</picture>
+                <vendor>Без марки</vendor>
+                <vendorCode>7045(M)</vendorCode>
+                <quantityStatus>0</quantityStatus>
+                <description><![CDATA[<p>Пolo Army ID Олива розмір M.</p>]]></description>
+                <param name="Розмір">M</param>
+            </offer>
+        </offers>
+    </shop>
+</yml_catalog>

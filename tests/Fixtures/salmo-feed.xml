@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<yml_catalog date="2026-08-18 03:37">
+    <shop>
+        <currencies>
+            <currency id="UAH" rate="1"/>
+        </currencies>
+        <categories>
+            <category id="1237">ЛІТНЯ КОЛЕКЦІЯ</category>
+            <category id="1229" parentId="1237">Окуляри</category>
+            <category id="1195" parentId="1237">Кемпінг</category>
+            <category id="1196" parentId="1195">Намети</category>
+        </categories>
+        <offers>
+            <offer id="17625" group_id="2457" available="true">
+                <url>https://salmo.ua/ru/okuliary-poliarizatciini-norfin-02/</url>
+                <price>1414.7</price>
+                <currencyId>UAH</currencyId>
+                <categoryId>1229</categoryId>
+                <picture>https://salmo.ua/content/images/26/main.jpg</picture>
+                <picture>https://salmo.ua/content/images/26/side.jpg</picture>
+                <vendorCode>NF-2002</vendorCode>
+                <vendor>Norfin</vendor>
+                <name><![CDATA[Очки поляризационные Norfin линзы зелёные REVO 02]]></name>
+                <description><![CDATA[Русское описание очков.]]></description>
+                <name_ua><![CDATA[Окуляри поляризац. Norfin 02]]></name_ua>
+                <description_ua><![CDATA[<p>Український опис окулярів.</p>]]></description_ua>
+                <param name="Цвет">серый</param>
+            </offer>
+            <offer id="17628" group_id="5457" available="">
+                <url>https://salmo.ua/ru/namet-test/</url>
+                <price>2500</price>
+                <currencyId>UAH</currencyId>
+                <categoryId>1196</categoryId>
+                <picture>https://salmo.ua/content/images/28/tent.jpg</picture>
+                <vendorCode>TENT-01</vendorCode>
+                <vendor>Salmo</vendor>
+                <name><![CDATA[Палатка Salmo тестовая]]></name>
+                <description><![CDATA[Русское описание палатки.]]></description>
+                <name_ua><![CDATA[Намет Salmo тестовий]]></name_ua>
+                <description_ua><![CDATA[Український опис намету.]]></description_ua>
+            </offer>
+        </offers>
+    </shop>
+</yml_catalog>

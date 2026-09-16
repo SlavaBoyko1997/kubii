@@ -1,0 +1,161 @@
+# Окремий стек поруч із tripfish.com.ua.
+# Не використовувати docker-compose.prod.yml на цьому сервері:
+# там імена контейнерів fishtrip-* і порти 80/443 живого сайту.
+name: kubii
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: kubii-app
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_CACHE_HOST: redis-cache
+      REDIS_CACHE_PORT: 6379
+    volumes:
+      - .:/var/www/html
+      - ./docker/php/www-performance.conf:/usr/local/etc/php-fpm.d/zz-performance.conf:ro
+      - ./docker/php/opcache.ini:/usr/local/etc/php/conf.d/99-opcache.ini:ro
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      redis-cache:
+        condition: service_healthy
+    networks:
+      - kubii
+
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: kubii-nginx
+    restart: unless-stopped
+    ports:
+      - "8088:80"
+    volumes:
+      - .:/var/www/html:ro
+      - ./docker/nginx/sidecar.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - app
+    networks:
+      - kubii
+
+  queue:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: kubii-queue
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_CACHE_HOST: redis-cache
+      REDIS_CACHE_PORT: 6379
+    command: ["su", "www-data", "-s", "/bin/sh", "-c", "php artisan queue:work redis --sleep=3 --tries=1 --timeout=3600 --memory=512 --queue=reviews,feeds,catalog-cache,default"]
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      redis-cache:
+        condition: service_healthy
+      app:
+        condition: service_started
+    networks:
+      - kubii
+
+  scheduler:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: kubii-scheduler
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_CACHE_HOST: redis-cache
+      REDIS_CACHE_PORT: 6379
+    command: ["sh", "-c", "while true; do su www-data -s /bin/sh -c 'php artisan schedule:run --verbose --no-interaction'; sleep 60; done"]
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      redis-cache:
+        condition: service_healthy
+      app:
+        condition: service_started
+    networks:
+      - kubii
+
+  mysql:
+    image: mysql:8.4
+    container_name: kubii-mysql
+    restart: unless-stopped
+    command: ["mysqld", "--skip-log-bin"]
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE:-kubii}
+      MYSQL_USER: ${DB_USERNAME:-kubii}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-kubii}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-kubii-root}
+    volumes:
+      - kubii-mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-p${DB_ROOT_PASSWORD:-kubii-root}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    networks:
+      - kubii
+
+  redis:
+    image: redis:7-alpine
+    container_name: kubii-redis
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - kubii-redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    networks:
+      - kubii
+
+  redis-cache:
+    image: redis:7-alpine
+    container_name: kubii-redis-cache
+    restart: unless-stopped
+    command: ["redis-server", "--save", "", "--appendonly", "no", "--maxmemory", "256mb", "--maxmemory-policy", "allkeys-lru"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    networks:
+      - kubii
+
+networks:
+  kubii:
+    driver: bridge
+
+volumes:
+  kubii-mysql-data:
+  kubii-redis-data:

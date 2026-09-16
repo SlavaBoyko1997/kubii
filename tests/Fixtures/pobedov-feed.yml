@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE yml_catalog SYSTEM "shops.dtd">
+<yml_catalog date="2026-06-24 13:00">
+    <shop>
+        <currencies>
+            <currency id="UAH" rate="1"/>
+        </currencies>
+        <categories>
+            <category id="9">Чоловічий одяг</category>
+            <category id="26" parentId="9">Чоловічі футболки та майки</category>
+        </categories>
+        <offers>
+            <offer id="00000006297" available="true" group_id="229771">
+                <name>Футболка мужская однотонная темно-синяя Pobedov Peremoga Військова</name>
+                <name_ua>Футболка чоловіча однотонна темно-синя Pobedov Peremoga Військова</name_ua>
+                <categoryId>26</categoryId>
+                <price>650</price>
+                <currencyId>UAH</currencyId>
+                <picture>https://example.test/pobedov-1.jpg</picture>
+                <vendor>Pobedov</vendor>
+                <vendorCode>TSfu20003XLdb</vendorCode>
+                <quantity_in_stock>11</quantity_in_stock>
+                <description><![CDATA[Великолепная базовая футболка на каждый день.]]></description>
+                <description_ua><![CDATA[Чудова базова футболка на кожен день.]]></description_ua>
+                <param name="Состояние">Новое</param>
+                <param name="Стиль">Casual</param>
+                <param name="Силуэт">Приталенный</param>
+                <param name="Склад тканини (укр)">95% бавовна, 5% еластан</param>
+                <param name="Склад тканини (рос)">95% хлопок, 5% эластан</param>
+                <param name="Цвет">Темно-синий</param>
+                <param name="Сезон">Лето</param>
+                <param name="Международный размер">XXXL</param>
+                <param name="Відео">https://www.youtube.com/watch?v=example</param>
+            </offer>
+            <offer id="00000007193" available="true" group_id="169980">
+                <name>Футболка мужская однотонная красная Pobedov Peremoga M</name>
+                <name_ua>Футболка чоловіча однотонна червона Pobedov Peremoga M</name_ua>
+                <categoryId>26</categoryId>
+                <price>640</price>
+                <currencyId>UAH</currencyId>
+                <picture>https://example.test/pobedov-m.jpg</picture>
+                <vendor>Pobedov</vendor>
+                <vendorCode>TSfu1499Mre</vendorCode>
+                <quantity_in_stock>2</quantity_in_stock>
+                <description_ua><![CDATA[Розмір M.]]></description_ua>
+            </offer>
+        </offers>
+    </shop>
+</yml_catalog>

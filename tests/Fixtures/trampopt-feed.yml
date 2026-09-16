@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE yml_catalog SYSTEM "shops.dtd">
+<yml_catalog date="2026-07-10 13:12">
+    <shop>
+        <currencies>
+            <currency id="UAH" rate="1"/>
+        </currencies>
+        <categories>
+            <category id="167">Посуд</category>
+            <category id="170" parentId="167">Кружки та стакани (з характ.)</category>
+            <category id="254">Hey Sport</category>
+            <category id="256" parentId="254">Lavit</category>
+        </categories>
+        <offers>
+            <offer id="TRC-022" available="" selling_type="r" group_id="946">
+                <name>Набір 4 стопки TRAMP, 25 мл</name>
+                <categoryId>170</categoryId>
+                <price>294</price>
+                <currencyId>UAH</currencyId>
+                <picture>https://24.ecomm.plus:8080/TrampOpt/cf360114-4076-11eb-80d5-da642b340251.jpg</picture>
+                <vendor>Tramp</vendor>
+                <vendorCode>TRC-022</vendorCode>
+                <quantity_in_stock>0</quantity_in_stock>
+                <description><![CDATA[Набір 4 стопки Tramp. Матеріал: нержавіюча сталь.]]></description>
+                <param name="material">сталь</param>
+                <param name="rozmir">25 мл</param>
+            </offer>
+            <offer id="TRC-013" available="" selling_type="r" group_id="946">
+                <name>Набір 4 стопки TRAMP, 80 мл</name>
+                <categoryId>170</categoryId>
+                <price>426</price>
+                <currencyId>UAH</currencyId>
+                <picture>https://24.ecomm.plus:8080/TrampOpt/cf360117-4076-11eb-80d5-da642b340251.jpg</picture>
+                <vendor>Tramp</vendor>
+                <vendorCode>TRC-013</vendorCode>
+                <quantity_in_stock>0</quantity_in_stock>
+                <description><![CDATA[Набір 4 стопки Tramp. Матеріал: нержавіюча сталь.]]></description>
+                <param name="material">сталь</param>
+                <param name="rozmir">80 мл</param>
+            </offer>
+            <offer id="39704100" available="true" selling_type="r">
+                <name>Масло масажне Sport Lavit Bodyoil 200ml (39704100)</name>
+                <categoryId>256</categoryId>
+                <price>401</price>
+                <currencyId>UAH</currencyId>
+                <picture>https://24.ecomm.plus:8080/TrampOpt/1de72c8c-ca6b-11ee-9240-000c29769620.jpg</picture>
+                <vendor>HEY-sport</vendor>
+                <vendorCode>39704100</vendorCode>
+                <quantity_in_stock>50</quantity_in_stock>
+                <description><![CDATA[Високоякісне масажне масло містить у складі екстракт календули та соєву олію.]]></description>
+            </offer>
+        </offers>
+    </shop>
+</yml_catalog>

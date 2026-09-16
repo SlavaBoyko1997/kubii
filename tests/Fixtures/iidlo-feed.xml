@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE yml_catalog SYSTEM "shops.dtd">
+<yml_catalog date="2026-08-11 03:43">
+ <shop>
+  <currencies>
+   <currency id="UAH" rate="1"/>
+  </currencies>
+  <categories>
+   <category id="1052">СНІДАНКИ</category>
+   <category id="1105">ОСНОВНІ СТРАВИ</category>
+   <category id="1057" parentId="1105">СТРАВИ З М'ЯСОМ</category>
+  </categories>
+  <offers>
+   <offer id="297" group_id="103367" available="true">
+    <url>https://idlo.com/hranola-horikhova-z-shokoladom-yidlo/</url>
+    <price>150</price>
+    <currencyId>UAH</currencyId>
+    <categoryId>1052</categoryId>
+    <picture>https://idlo.com/content/images/48/26641340249062_+500e5314ed.png</picture>
+    <picture>https://idlo.com/content/images/48/15636590439131_+c52e1a7e7e.png</picture>
+    <vendorCode>004</vendorCode>
+    <vendor>ЇDLO</vendor>
+    <name><![CDATA[Гранола горіхова з шоколадом ЇDLO]]></name>
+    <description><![CDATA[<p>Гранола горіхова з шоколадом - це смачний і збалансований продукт швидкого приготування.</p>]]></description>
+   </offer>
+   <offer id="335" group_id="156448" available="">
+    <url>https://idlo.com/nabir-vydelka-lozhka-nizh-iidlo/</url>
+    <oldprice>190</oldprice>
+    <price>170</price>
+    <currencyId>UAH</currencyId>
+    <categoryId>1057</categoryId>
+    <picture>https://idlo.com/content/images/35/example.png</picture>
+    <vendorCode>027</vendorCode>
+    <vendor>ЇDLO</vendor>
+    <name><![CDATA[Набір ложка-вилка-ніж ЇDLO]]></name>
+    <description><![CDATA[<p>Легкий туристичний набір для походів.</p>]]></description>
+    <param name="Гарантия">12 мес.</param>
+   </offer>
+  </offers>
+ </shop>
+</yml_catalog>

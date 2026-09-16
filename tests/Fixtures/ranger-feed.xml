@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<yml_catalog date="2026-6-26 11:0">
+    <shop>
+        <name>Ranger</name>
+        <url>http://ranger.ua/</url>
+        <company>ТОВ НВП «Дніпро Софт»</company>
+        <currencies>
+            <currency id="UAH" rate="1"/>
+        </currencies>
+        <categories>
+            <category id="7">Намети та парасолі</category>
+            <category id="14">Термоси та термокухлі</category>
+            <category id="8">Підводні камери</category>
+        </categories>
+        <offers>
+            <offer id="RA6616" available="false">
+                <barcode>RA6616</barcode>
+                <url>https://ranger.ua/namety-i-parasoli/parasolka-namet-ranger-umbrella-50-art-ra-6616/</url>
+                <stock_quantity>0.000000</stock_quantity>
+                <price>1944</price>
+                <currencyId>UAH</currencyId>
+                <categoryId>7</categoryId>
+                <picture>https://ranger.ua/wp-content/uploads/2025/05/50-sajt-scaled-2.jpg</picture>
+                <vendor>Ranger</vendor>
+                <name>Зонт-палатка Ranger Umbrella 50 (Арт.RA 6616)</name>
+                <name_ua>Зонт-палатка Ranger Umbrella 50 (арт. RA 6616)</name_ua>
+                <description><![CDATA[Русский опис зонта.]]></description>
+                <description_ua><![CDATA[Український опис зонта.]]></description_ua>
+            </offer>
+            <offer id="RA9939" available="true">
+                <barcode>RA9939</barcode>
+                <url>https://ranger.ua/termosy/chokhol-dlia-termosa-ranger-1-6-l-art-ra-9939/</url>
+                <stock_quantity>29</stock_quantity>
+                <price>399</price>
+                <currencyId>UAH</currencyId>
+                <categoryId>14</categoryId>
+                <picture>https://ranger.ua/wp-content/uploads/2025/05/mini_8-2.jpg</picture>
+                <vendor>Ranger</vendor>
+                <name>Чехол для термоса Ranger 1,6 L (Ар. RA 9939)</name>
+                <name_ua>Чохол для термоса Ranger 1,6 L (Арт. RA 9939)</name_ua>
+                <description><![CDATA[Русский опис чехла.]]></description>
+                <description_ua><![CDATA[Український опис чохла.]]></description_ua>
+            </offer>
+            <offer id="RA8830" available="false">
+                <barcode>RA8830</barcode>
+                <url>https://ranger.ua/pidvodni-kamery/pidvodna-videokamera-ranger-lux-record-art-ra-8830/</url>
+                <stock_quantity>0.000000</stock_quantity>
+                <price>6999</price>
+                <currencyId>UAH</currencyId>
+                <categoryId>8</categoryId>
+                <picture>https://ranger.ua/wp-content/uploads/2025/05/cus8926-2.jpg</picture>
+                <vendor>Ranger</vendor>
+                <name>Подводная видеокамера Ranger Lux Record(Арт. RA 8830)</name>
+                <name_ua>Відеокамера підводная Ranger Record Lux (Арт. RA 8830)</name_ua>
+                <description><![CDATA[Русский опис камеры. <strong>Характеристики:</strong> — материал: пластик; — цвет: зеленый; — вес: 0,5 кг.]]></description>
+                <description_ua><![CDATA[Український опис камери. <strong>Характеристики:</strong> - <strong>матеріал:</strong> Oxford 600D; - <strong>колір:</strong> чорний, помаранчевий; - <strong>вага:</strong> 0,5 кг.]]></description_ua>
+            </offer>
+            <offer id="RA9924" available="true">
+                <barcode>RA9924</barcode>
+                <url>https://ranger.ua/termosy/chehol-tubus-ranger-dlia-termosa-0-75-1-2-l-art-ra-9924/</url>
+                <stock_quantity>5</stock_quantity>
+                <price>499</price>
+                <currencyId>UAH</currencyId>
+                <categoryId>14</categoryId>
+                <picture>https://ranger.ua/wp-content/uploads/2025/05/tubus.jpg</picture>
+                <vendor>Ranger</vendor>
+                <name>Чехол-тубус Ranger для термоса 0,75-1,2 L (Ар. RA 9924)</name>
+                <name_ua>Чохол-тубус Ranger для термоса 0,75-1,2 L (Ар. RA 9924)</name_ua>
+                <description><![CDATA[Опис чехла. <strong>Характеристики:</strong> — материал: пластиковая труба, Oxford 600D; — цвет: зеленый; — размер в разложенном виде: 33х11х11 см (ВхДхШ); — вес: 0,5 кг. [embed]https://youtu.be/a4lxmwdce6s[/embed]]]></description>
+                <description_ua><![CDATA[Опис чохла. <strong>Характеристики:</strong> - <strong>матеріал:</strong> Oxford 600D; - <strong>колір:</strong> чорний, помаранчевий; - <strong>розмір в розкладеному вигляді:</strong> 33х11х11 см (ВхДхШ); - <strong>вага:</strong> 0,5 кг. [embed]https://youtu.be/a4lxmwdce6s[/embed]]]></description_ua>
+            </offer>
+            <offer id="RA6608" available="true">
+                <barcode>RA6608</barcode>
+                <url>https://ranger.ua/namety-i-parasoli/zymova-nakydka-ranger-exp-3-man-bivvy-art-ra-6608/</url>
+                <stock_quantity>3</stock_quantity>
+                <price>5999</price>
+                <currencyId>UAH</currencyId>
+                <categoryId>7</categoryId>
+                <picture>https://ranger.ua/wp-content/uploads/2025/05/bivvy-cover.jpg</picture>
+                <vendor>Ranger</vendor>
+                <name>Зимняя накидка Ranger EXP 3-man Bivvy (Арт. RA 6608)</name>
+                <name_ua>Зимова накидка Ranger EXP 3-man Bivvy (Арт. RA 6608)</name_ua>
+                <description><![CDATA[Опис накидки. <strong>Характеристики:</strong> <strong>- тканина:</strong> Нейлон 210D PU; <strong>- колір:</strong> оливково-зелений; <strong>- розмір в розкладеному вигляді:</strong> 180х400х330 см (ВхГхШ); -<strong> розмір в складеному вигляді</strong>: 45х25х25 см (ДхГхШ); <strong>- розмір водяної колони:</strong> 5000мм; <strong>- вага:</strong> 3,5 кг.]]></description>
+                <description_ua><![CDATA[Опис накидки. <strong>Характеристики:</strong> <strong>- тканина:</strong> Нейлон 210D PU; <strong>- колір:</strong> оливково-зелений; <strong>- розмір в розкладеному вигляді:</strong> 180х400х330 см (ВхГхШ); -<strong> розмір в складеному вигляді</strong>: 45х25х25 см (ДхГхШ); <strong>- розмір водяної колони:</strong> 5000мм; <strong>- вага:</strong> 3,5 кг.]]></description_ua>
+            </offer>
+            <offer id="RA6666" available="true">
+                <barcode>RA6666</barcode>
+                <url>https://ranger.ua/namety-i-parasoli/gazebo-cube-ranger-art-ra-6666/</url>
+                <stock_quantity>2</stock_quantity>
+                <price>12999</price>
+                <currencyId>UAH</currencyId>
+                <categoryId>7</categoryId>
+                <picture>https://ranger.ua/wp-content/uploads/2026/04/1.jpg</picture>
+                <vendor>Ranger</vendor>
+                <name>Шатро Ranger Gazebo Cube (Арт. RA 6666)</name>
+                <name_ua>Шатро Ranger Gazebo Cube (Арт. RA 6666)</name_ua>
+                <description><![CDATA[Короткий опис шатра. У комплекті: кілочки, сумка. – <strong>каркас:</strong> метал 16 та 20 мм; – <strong>тканина:</strong> Нейлон 210D PU, підлога з прочного ПВХ; – <strong>колір:</strong> оливково-зелений; – <strong>розмір в розкладеному вигляді:</strong> 205х355х205-275 см (ВхГхШ); – <strong>розмір в складеному вигляді:</strong> 140х24х24 см (ДхГхШ); – <strong>розмір вікна: </strong>110х94 см  (ВхШ); – <strong>розмір кармана: </strong>23х46 см  (ВхШ); – <strong>розмір водяної колони:</strong> 8000мм; – <strong>вага:</strong> 18 кг. <strong>RANGER Gazebo Cube</strong> — ідеальне рішення.]]></description>
+                <description_ua><![CDATA[Короткий опис шатра. У комплекті: кілочки, сумка. – <strong>каркас:</strong> метал 16 та 20 мм; – <strong>тканина:</strong> Нейлон 210D PU, підлога з прочного ПВХ; – <strong>колір:</strong> оливково-зелений; – <strong>розмір в розкладеному вигляді:</strong> 205х355х205-275 см (ВхГхШ); – <strong>розмір в складеному вигляді:</strong> 140х24х24 см (ДхГхШ); – <strong>розмір вікна: </strong>110х94 см  (ВхШ); – <strong>розмір кармана: </strong>23х46 см  (ВхШ); – <strong>розмір водяної колони:</strong> 8000мм; – <strong>вага:</strong> 18 кг. <strong>RANGER Gazebo Cube</strong> — ідеальне рішення.]]></description_ua>
+            </offer>
+        </offers>
+    </shop>
+</yml_catalog>

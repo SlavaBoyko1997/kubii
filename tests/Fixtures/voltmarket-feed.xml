@@ -1,0 +1,95 @@
+<?xml version="1.0"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:g="http://base.google.com/ns/1.0">
+    <title></title>
+    <link>https://voltmarket.ua/</link>
+    <updated>2026-08-13 06:50</updated>
+    <entry>
+        <g:title>Бензиновий генератор інверторний Könner&amp;Söhnen KSB 21i</g:title>
+        <g:link>https://voltmarket.ua/benzinovye-generatory/ksbasic/ksb21i</g:link>
+        <g:id>7487</g:id>
+        <g:price>18499 UAH</g:price>
+        <g:description><![CDATA[Компактний інверторний генератор для резервного живлення.]]></g:description>
+        <g:brand>Könner&amp;Söhnen</g:brand>
+        <g:condition>new</g:condition>
+        <g:image_link>https://voltmarket.ua/image/catalog/generator.jpg</g:image_link>
+        <g:availability>in stock</g:availability>
+        <g:product_type>Паливні генератори &gt; Бензинові генератори</g:product_type>
+        <g:product_detail>
+            <g:attribute_name>Потужність, кВт</g:attribute_name>
+            <g:attribute_value>2.0</g:attribute_value>
+        </g:product_detail>
+        <g:product_detail>
+            <g:attribute_name>Тип монтажу</g:attribute_name>
+            <g:attribute_value>настенный</g:attribute_value>
+        </g:product_detail>
+        <g:product_detail>
+            <g:attribute_name>Кіл-ть фаз</g:attribute_name>
+            <g:attribute_value>1</g:attribute_value>
+        </g:product_detail>
+        <g:product_detail>
+            <g:attribute_name>Призначення</g:attribute_name>
+            <g:attribute_value>автономного электроснабжения|для дома|для дачи|для предприятия</g:attribute_value>
+        </g:product_detail>
+    </entry>
+    <entry>
+        <g:title>Джерело безперебійного живлення RUCELF UPO-II-6000</g:title>
+        <g:link>https://voltmarket.ua/istochniki-bespereboinogo-pitaniya/rucelf/upoii6000</g:link>
+        <g:id>2542</g:id>
+        <g:price>38463 UAH</g:price>
+        <g:description><![CDATA[ДБЖ для резервного живлення.]]></g:description>
+        <g:brand>RUCELF</g:brand>
+        <g:condition>new</g:condition>
+        <g:image_link>https://voltmarket.ua/image/catalog/ups.jpg</g:image_link>
+        <g:availability>in stock</g:availability>
+        <g:product_type>Джерела безперебійного живлення</g:product_type>
+    </entry>
+    <entry>
+        <g:title>Інвертор Luxeon IPS-300S</g:title>
+        <g:link>https://voltmarket.ua/invertory/luxeon/ips300s</g:link>
+        <g:id>4545</g:id>
+        <g:price>2715 UAH</g:price>
+        <g:description><![CDATA[Інвертор для автономного живлення.]]></g:description>
+        <g:brand>Luxeon</g:brand>
+        <g:condition>new</g:condition>
+        <g:image_link>https://voltmarket.ua/image/catalog/inverter.jpg</g:image_link>
+        <g:availability>in stock</g:availability>
+        <g:product_type>Альтернативна енергетика &gt; Сонячні інвертори</g:product_type>
+    </entry>
+    <entry>
+        <g:title>Автоматичний зарядний пристрій Master Watt</g:title>
+        <g:link>https://voltmarket.ua/zaryadnye-ustroistva/masterwatt/azu0312a6vmoto</g:link>
+        <g:id>4596</g:id>
+        <g:price>735 UAH</g:price>
+        <g:sale_price>625 UAH</g:sale_price>
+        <g:sale_price_effective_date>2026-08-13 00:30:00/2026-08-14 23:30:00</g:sale_price_effective_date>
+        <g:description><![CDATA[Зарядний пристрій для акумуляторів.]]></g:description>
+        <g:brand>Master Watt</g:brand>
+        <g:condition>new</g:condition>
+        <g:image_link>https://voltmarket.ua/image/catalog/charger.jpg</g:image_link>
+        <g:availability>out of stock</g:availability>
+        <g:product_type>Зарядні пристрої</g:product_type>
+    </entry>
+    <entry>
+        <g:title>Акумулятор LiFePO4 EC-12100 12В 100Аг</g:title>
+        <g:link>https://voltmarket.ua/litievye-akkumulyatory/provolt/ec-12100-lfp-12v---100ah</g:link>
+        <g:id>26801</g:id>
+        <g:price>12799 UAH</g:price>
+        <g:description><![CDATA[Літій-залізофосфатний акумулятор для резервного живлення.]]></g:description>
+        <g:brand>proVolt</g:brand>
+        <g:condition>new</g:condition>
+        <g:image_link>https://voltmarket.ua/image/catalog/battery.jpg</g:image_link>
+        <g:availability>in stock</g:availability>
+        <g:product_type>Акумуляторні батареї &gt; Літієві акумулятори</g:product_type>
+    </entry>
+    <entry>
+        <g:title>Стабілізатор напруги не з потрібної категорії</g:title>
+        <g:link>https://voltmarket.ua/stabilizatory-napryazheniya/test</g:link>
+        <g:id>9999</g:id>
+        <g:price>1000 UAH</g:price>
+        <g:description><![CDATA[Не має імпортуватися.]]></g:description>
+        <g:brand>Test</g:brand>
+        <g:image_link>https://voltmarket.ua/image/catalog/skip.jpg</g:image_link>
+        <g:availability>in stock</g:availability>
+        <g:product_type>Стабілізатори напруги</g:product_type>
+    </entry>
+</feed>

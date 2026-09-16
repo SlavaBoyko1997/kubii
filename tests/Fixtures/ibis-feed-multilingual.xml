@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:g="http://base.google.com/ns/1.0">
+    <channel>
+        <item group_id="7001">
+            <g:id>70010001</g:id>
+            <g:image_link>https://example.com/rod.jpg</g:image_link>
+            <g:brand>Favorite</g:brand>
+            <g:title>Вудилище тестове</g:title>
+            <g:title_ru>Удилище тестовое</g:title_ru>
+            <g:price>2500.00 UAH</g:price>
+            <g:link>https://example.com/rod</g:link>
+            <g:google_product_category>ІБІС Риболовля &gt; Риболовля &gt; Вудилища</g:google_product_category>
+            <g:google_product_category_ru>ИБИС Рыбалка &gt; Рыбалка &gt; Удилища</g:google_product_category_ru>
+            <g:description>&lt;p&gt;Тестове вудилище.&lt;/p&gt;</g:description>
+            <g:description_ru>&lt;p&gt;Тестовое удилище.&lt;/p&gt;</g:description_ru>
+            <g:prop name_ua="Сезон" value_ua="Літо" name_ru="Сезон" value_ru="Лето">Літо</g:prop>
+            <g:prop name_ua="Матеріал" value_ua="Карбон" name_ru="Материал" value_ru="Карбон">Карбон</g:prop>
+            <g:availability>1</g:availability>
+        </item>
+    </channel>
+</rss>

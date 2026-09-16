@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<yml_catalog date="2026-06-26 11:18">
+    <shop>
+        <name>Компания Атлантмаркет</name>
+        <company>Компания Атлантмаркет</company>
+        <url>https://atlantmarket.com.ua</url>
+        <currencies>
+            <currency id="UAH" rate="1"/>
+        </currencies>
+        <categories>
+            <category id="1961" portal_id="">Мультитули</category>
+            <category id="1906" portal_id="1961" parentId="1961">Ganzo мультитули</category>
+            <category id="1942" portal_id="">Ліхтарі</category>
+            <category id="1952" portal_id="1942" parentId="1942">Fenix ел живлення та зарядні пристрої</category>
+        </categories>
+        <offers>
+            <offer id="44136" available="true">
+                <url>https://atlantmarket.com.ua/multitul-multi-tool-ganzo-g203/</url>
+                <price>960</price>
+                <currencyId>UAH</currencyId>
+                <barcode>G203</barcode>
+                <categoryId>1906</categoryId>
+                <picture>https://atlantmarket.com.ua/upload/iblock/1d7/g203-uk.jpg</picture>
+                <name>Мультитул Multi Tool Ganzo G203</name>
+                <description><![CDATA[<p>Мультитул Ganzo G203 для туризму.</p>]]></description>
+                <warranty>12 місяців</warranty>
+                <vendor>Ganzo</vendor>
+                <param name="Вага">217 г</param>
+                <param name="Колір мультитула">синій , блакитний</param>
+            </offer>
+            <offer id="44161" available="true">
+                <url>https://atlantmarket.com.ua/akumulyator-18650-fenix-2600-mah-arb-l18-2600-arb-l18-2600/</url>
+                <price>550</price>
+                <currencyId>UAH</currencyId>
+                <barcode>ARB-L18-2600</barcode>
+                <categoryId>1952</categoryId>
+                <picture>https://atlantmarket.com.ua/upload/iblock/2e0/12618.jpg</picture>
+                <name>Акумулятор 18650 Fenix (2600 mAh)</name>
+                <description><![CDATA[<p>Акумулятор Fenix ARB-L18-2600.</p>]]></description>
+                <warranty>12 місяців</warranty>
+                <vendor>Fenix</vendor>
+                <param name="Типорозмір елемента живлення">18650</param>
+            </offer>
+            <offer id="99999" available="false">
+                <url>https://atlantmarket.com.ua/multitul-out-of-stock/</url>
+                <price>500</price>
+                <currencyId>UAH</currencyId>
+                <barcode>G999</barcode>
+                <categoryId>1906</categoryId>
+                <name>Мультитул Ganzo G999</name>
+                <vendor>Ganzo</vendor>
+            </offer>
+        </offers>
+    </shop>
+</yml_catalog>
