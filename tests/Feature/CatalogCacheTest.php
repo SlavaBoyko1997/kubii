@@ -467,6 +467,7 @@ class CatalogCacheTest extends TestCase
             'category_id' => $leaf->id,
             'name' => 'Тестове вудилище',
             'slug' => 'mega-test-rod',
+            'brand' => 'TestBrand',
             'price' => 1200,
             'stock' => 3,
             'is_active' => true,
@@ -481,7 +482,10 @@ class CatalogCacheTest extends TestCase
             ->assertSee('Вудилища')
             ->assertSee('Спінінгові')
             ->assertSee('data-mega-more', false)
-            ->assertSee('mega-extra', false);
+            ->assertSee('mega-extra', false)
+            ->assertSee('mega-brands', false)
+            ->assertSee('TestBrand')
+            ->assertSee('/brand/testbrand', false);
 
         $this->get('/')
             ->assertOk()

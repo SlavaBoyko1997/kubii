@@ -38,3 +38,16 @@
         </div>
     @endforeach
 </div>
+
+@if(($menuBrands ?? []) !== [])
+    <div class="mega-brands" data-mega-brands>
+        <div class="mega-brands-track">
+            @foreach([0, 1] as $loopCopy)
+                <a class="mega-brands-all" href="{{ localized_route('brands.index') }}">{{ __('Усі бренди') }}</a>
+                @foreach($menuBrands as $brand)
+                    <a href="{{ localized_route('brands.show', $brand['slug']) }}">{{ $brand['name'] }}</a>
+                @endforeach
+            @endforeach
+        </div>
+    </div>
+@endif

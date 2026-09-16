@@ -895,6 +895,7 @@ class StoreController extends Controller
         return response()
             ->view('store._catalog-menu', [
                 'menuCategories' => $cache->menu(),
+                'menuBrands' => $cache->menuBrands(),
             ])
             ->header('Cache-Control', 'public, max-age=300, stale-while-revalidate=86400')
             ->header('Vary', 'Accept-Encoding');

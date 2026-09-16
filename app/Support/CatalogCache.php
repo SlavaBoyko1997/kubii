@@ -359,6 +359,20 @@ class CatalogCache
     }
 
     /**
+     * @return list<array{name: string, slug: string, products_count: int}>
+     */
+    public function menuBrands(): array
+    {
+        return $this->remember('menu-brands:v1', function (): array {
+            return collect($this->brands())
+                ->sortByDesc('products_count')
+                ->take(36)
+                ->values()
+                ->all();
+        });
+    }
+
+    /**
      * @return array{name: string, slug: string, products_count: int}|null
      */
     public function brandBySlug(string $slug): ?array

@@ -412,8 +412,8 @@ const closePanels = () => {
     drawer?.classList.remove('is-open');
     auth?.classList.remove('is-open');
     quickOrder?.classList.remove('is-open');
-    overlay?.classList.remove('is-open', 'is-mega');
-    document.body.classList.remove('panel-open');
+    overlay?.classList.remove('is-open', 'is-mega', 'is-panel');
+    document.body.classList.remove('panel-open', 'drawer-open');
     catalogNav?.querySelectorAll('[data-mega-root]').forEach((link) => link.classList.remove('is-current'));
 };
 
@@ -421,7 +421,7 @@ const catalogMenu = catalog?.querySelector('[data-catalog-menu]');
 const catalogNav = document.querySelector('[data-catalog-nav]');
 let catalogMenuRequest = null;
 let megaCloseTimer = null;
-const catalogMenuVersion = 'mega-v6';
+const catalogMenuVersion = 'mega-v7';
 
 const loadCatalogMenu = async () => {
     if (!catalogMenu || !catalogMenuUrl || (catalogMenu.dataset.loaded === 'true' && catalogMenu.dataset.version === catalogMenuVersion)) return;
@@ -474,6 +474,7 @@ const openCatalog = async (slug, { lock = true } = {}) => {
     auth?.classList.remove('is-open');
     quickOrder?.classList.remove('is-open');
     catalog?.classList.add('is-open');
+    overlay?.classList.remove('is-panel');
     overlay?.classList.add('is-open');
     overlay?.classList.toggle('is-mega', !lock);
     if (lock) {
@@ -562,8 +563,8 @@ catalogMenu?.addEventListener('click', (event) => {
 const openPanel = (panel) => {
     closePanels();
     panel?.classList.add('is-open');
-    overlay?.classList.add('is-open');
-    document.body.classList.add('panel-open');
+    overlay?.classList.add('is-open', 'is-panel');
+    document.body.classList.add('panel-open', 'drawer-open');
 };
 
 document.addEventListener('click', (event) => {
