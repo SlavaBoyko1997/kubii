@@ -10,7 +10,7 @@
     <div class="container page-space">
         <div class="breadcrumbs"><a href="{{ localized_route('cart.index') }}">{{ __('Кошик') }}</a> / <span>{{ __('Оформлення') }}</span></div>
         <div class="checkout-hero">
-            <span class="auth-kicker">Kubii checkout</span>
+            <span class="auth-kicker">BASH checkout</span>
             <h1>{{ __('Оформлення замовлення') }}</h1>
         </div>
         <form class="checkout-layout" action="{{ localized_route('checkout.store') }}" method="POST" data-checkout-wizard data-account-check-url="{{ localized_route('checkout.account-check') }}">

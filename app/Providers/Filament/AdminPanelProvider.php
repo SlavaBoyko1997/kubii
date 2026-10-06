@@ -33,7 +33,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login(Login::class)
-            ->brandName('Kubii')
+            ->brandName('BASH')
             ->brandLogo(asset('images/bash-logo-olive.svg'))
             ->brandLogoHeight('2rem')
             ->font('Montserrat', asset('css/montserrat.css'), LocalFontProvider::class, [

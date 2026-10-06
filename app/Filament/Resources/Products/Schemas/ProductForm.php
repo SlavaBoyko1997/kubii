@@ -304,7 +304,7 @@ class ProductForm
                     ->schema([
                         Grid::make(2)->schema([
                             TextInput::make('sku')
-                                ->label('Код товару Kubii')
+                                ->label('Код товару BASH')
                                 ->readOnly()
                                 ->helperText('Генерується автоматично після збереження.'),
                             Placeholder::make('counterparty_label')

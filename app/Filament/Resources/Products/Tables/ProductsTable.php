@@ -50,7 +50,7 @@ class ProductsTable
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('sku')
-                    ->label('Код Kubii')
+                    ->label('Код BASH')
                     ->searchable(),
                 TextColumn::make('external_id')
                     ->label('Код постачальника')

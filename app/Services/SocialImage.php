@@ -93,7 +93,7 @@ class SocialImage
 
         $response = Http::timeout(7)
             ->connectTimeout(3)
-            ->withHeaders(['User-Agent' => 'Kubii-SocialImage/1.0'])
+            ->withHeaders(['User-Agent' => 'BASH-SocialImage/1.0'])
             ->withOptions(['allow_redirects' => false])
             ->get($sourceUrl);
 

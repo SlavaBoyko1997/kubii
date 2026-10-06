@@ -132,7 +132,7 @@ class GoogleMerchantFeedGenerator
         $writer->writeAttribute('version', '2.0');
         $writer->writeAttribute('xmlns:g', self::GOOGLE_NAMESPACE);
         $writer->startElement('channel');
-        $writer->writeElement('title', (string) config('app.name', 'Kubii').' product feed');
+        $writer->writeElement('title', (string) config('app.name', 'BASH').' product feed');
         $writer->writeElement('link', $baseUrl);
         $writer->writeElement('description', 'Google Merchant Center product feed');
     }

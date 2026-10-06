@@ -402,7 +402,7 @@ class Product extends Model
     public function seoTitle(?string $locale = null): string
     {
         $locale ??= Locale::current();
-        $suffix = $locale === 'ru' ? ' купить в Kubii' : ' купити в Kubii';
+        $suffix = $locale === 'ru' ? ' купить в BASH' : ' купити в BASH';
 
         return $this->translated('seo_title', $locale) ?: $this->translated('name', $locale).$suffix;
     }
@@ -411,8 +411,8 @@ class Product extends Model
     {
         $locale ??= Locale::current();
         $fallback = $locale === 'ru'
-            ? $this->translated('name', $locale).' - туристическое и рыболовное снаряжение Kubii.'
-            : $this->translated('name', $locale).' - туристичне та рибальське спорядження Kubii.';
+            ? $this->translated('name', $locale).' - туристическое и рыболовное снаряжение BASH.'
+            : $this->translated('name', $locale).' - туристичне та рибальське спорядження BASH.';
 
         return str($this->translated('meta_description', $locale) ?: $this->translated('description', $locale) ?: $fallback)
             ->limit(155)

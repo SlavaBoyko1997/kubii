@@ -13,7 +13,7 @@ return [
     'mirror_job_time_budget_seconds' => (int) env('PRODUCT_IMAGE_MIRROR_TIME_BUDGET', 90),
     'http_timeout' => (int) env('PRODUCT_IMAGE_HTTP_TIMEOUT', 20),
     'http_connect_timeout' => (int) env('PRODUCT_IMAGE_HTTP_CONNECT_TIMEOUT', 5),
-    'user_agent' => env('PRODUCT_IMAGE_USER_AGENT', 'Kubii-ProductImageMirror/1.0'),
+    'user_agent' => env('PRODUCT_IMAGE_USER_AGENT', 'BASH-ProductImageMirror/1.0'),
     'browser_user_agent' => env(
         'PRODUCT_IMAGE_BROWSER_USER_AGENT',
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',

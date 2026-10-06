@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     @php
         $resolvedSeoMeta = $seoMeta ?? app(\App\Services\SeoMeta::class)->generic(
-            trim($__env->yieldContent('title', 'Kubii')),
+            trim($__env->yieldContent('title', 'BASH')),
         );
     @endphp
-    <title>{{ isset($seoMeta) ? $resolvedSeoMeta['title'] : trim($__env->yieldContent('title', 'Kubii')).' - '.__('спорядження для туризму та рибалки') }}</title>
+    <title>{{ isset($seoMeta) ? $resolvedSeoMeta['title'] : trim($__env->yieldContent('title', 'BASH')).' - '.__('спорядження для туризму та рибалки') }}</title>
     @if(isset($seoMeta))
         <meta name="description" content="{{ $resolvedSeoMeta['description'] }}">
     @endif
@@ -69,7 +69,7 @@
             'Сервер не повернув адресу для переходу після реєстрації.',
             'Не вдалося створити профіль.', 'Не вдалося виконати вхід.', 'Новий клієнт',
             'Завантажуємо категорії...', 'Не вдалося завантажити каталог.',
-            'Особистий кабінет', 'Створити профіль', 'Увійти до Kubii',
+            'Особистий кабінет', 'Створити профіль', 'Увійти до BASH',
             'Збережемо ваші замовлення та контактні дані в одному місці.',
             'Переглядайте історію замовлень і оформлюйте покупки швидше.',
             'Вже є профіль?', 'Ще немає профілю?', 'Увійти', 'Оновлюємо...',
@@ -195,7 +195,7 @@
     </section>
     @guest
         <section class="auth-popup" data-auth-popup>
-            <div class="popup-head"><div><span data-auth-kicker>{{ __('Особистий кабінет') }}</span><h2 data-auth-title>{{ __('Увійти до Kubii') }}</h2></div><button type="button" data-close-auth aria-label="{{ __('Закрити') }}">×</button></div>
+            <div class="popup-head"><div><span data-auth-kicker>{{ __('Особистий кабінет') }}</span><h2 data-auth-title>{{ __('Увійти до BASH') }}</h2></div><button type="button" data-close-auth aria-label="{{ __('Закрити') }}">×</button></div>
             <p data-auth-description>{{ __('Переглядайте історію замовлень і оформлюйте покупки швидше.') }}</p>
             <x-auth.google-button />
             <div class="auth-divider">{{ __('або') }}</div>
@@ -274,7 +274,7 @@
             <div><h3>{{ __('Інформація') }}</h3><a href="{{ localized_route('pages.show', 'about') }}">{{ __('Про компанію') }}</a><a href="{{ localized_route('blog.index') }}">{{ __('Блог') }}</a><a href="{{ localized_route('pages.show', 'contacts') }}">{{ __('Контакти та реквізити') }}</a><a href="{{ localized_route('pages.show', 'offer') }}">{{ __('Публічна оферта') }}</a><a href="{{ localized_route('pages.show', 'privacy') }}">{{ __('Політика конфіденційності') }}</a></div>
             <div><h3>{{ __('Особистий кабінет') }}</h3>@auth<a href="{{ localized_route('account.index') }}">{{ __('Мої замовлення') }}</a>@else<a href="{{ localized_route('login') }}">{{ __('Увійти') }}</a><a href="{{ localized_route('register') }}">{{ __('Зареєструватися') }}</a>@endauth</div>
         </div>
-        <div class="container footer-bottom"><span>© {{ date('Y') }} Kubii. {{ __('Усі права захищені.') }}</span><span>{{ __('Інформація на сайті є актуальною на момент перегляду. Остаточна сума замовлення формується з урахуванням обраного способу доставки та оплати.') }}</span></div>
+        <div class="container footer-bottom"><span>© {{ date('Y') }} BASH. {{ __('Усі права захищені.') }}</span><span>{{ __('Інформація на сайті є актуальною на момент перегляду. Остаточна сума замовлення формується з урахуванням обраного способу доставки та оплати.') }}</span></div>
     </footer>
 
     <nav class="bottom-nav">

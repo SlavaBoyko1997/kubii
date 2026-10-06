@@ -82,7 +82,7 @@ class StoreController extends Controller
         $brands = $cache->brands();
         $url = localized_route('brands.index');
         $title = __('Бренди');
-        $description = __('Усі бренди спорядження Kubii.');
+        $description = __('Усі бренди спорядження BASH.');
 
         return view('store.brands', [
             'brands' => $brands,
@@ -138,7 +138,7 @@ class StoreController extends Controller
 
         return [[
             'title' => __('Спорядження для маршруту і водойми'),
-            'text' => __('Туризм, кемпінг і риболовля в одному каталозі Kubii'),
+            'text' => __('Туризм, кемпінг і риболовля в одному каталозі BASH'),
             'image' => asset('images/hero-outdoor.webp'),
             'button_label' => null,
             'button_url' => null,
@@ -779,7 +779,7 @@ class StoreController extends Controller
                 'heading' => $data['catalogHeading'] ?? null,
                 'title' => $category
                     ? $seoMeta->category($category, $data['canonicalUrl'], $filterHeadingSuffix, $page)['title']
-                    : $seoMeta->page($data['catalogHeading'] ?? __('Бренди'), __('Товари бренду :brand у магазині Kubii.', ['brand' => $this->lockedBrand['name'] ?? '']), $data['canonicalUrl'])['title'],
+                    : $seoMeta->page($data['catalogHeading'] ?? __('Бренди'), __('Товари бренду :brand у магазині BASH.', ['brand' => $this->lockedBrand['name'] ?? '']), $data['canonicalUrl'])['title'],
             ]);
         }
 
@@ -794,7 +794,7 @@ class StoreController extends Controller
 
                 return $seoSchema->page(
                     $data['catalogHeading'] ?? __('Бренди'),
-                    __('Товари бренду :brand у магазині Kubii.', ['brand' => $this->lockedBrand['name'] ?? '']),
+                    __('Товари бренду :brand у магазині BASH.', ['brand' => $this->lockedBrand['name'] ?? '']),
                     $data['canonicalUrl'],
                     'CollectionPage',
                 );
@@ -812,7 +812,7 @@ class StoreController extends Controller
 
                 return $seoMeta->page(
                     ($data['catalogHeading'] ?? __('Бренди')).$pageSuffix,
-                    __('Товари бренду :brand у магазині Kubii. Фільтри, наявність і ціни.', ['brand' => $this->lockedBrand['name'] ?? '']).$pageSuffix,
+                    __('Товари бренду :brand у магазині BASH. Фільтри, наявність і ціни.', ['brand' => $this->lockedBrand['name'] ?? '']).$pageSuffix,
                     $data['canonicalUrl'],
                 );
             },

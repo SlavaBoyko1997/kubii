@@ -18,8 +18,8 @@ class EnsureAdminUser extends Command
         $password = (string) $this->option('password');
 
         $user = User::query()->updateOrCreate(['email' => $email], [
-            'name' => 'Kubii Admin',
-            'last_name' => 'Kubii',
+            'name' => 'BASH Admin',
+            'last_name' => 'BASH',
             'first_name' => 'Admin',
             'patronymic' => null,
             'phone' => null,

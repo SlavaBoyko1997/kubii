@@ -250,7 +250,7 @@ class AuthController extends Controller
             ]);
         }
 
-        return redirect()->to($destination)->with('success', __('Реєстрацію завершено. Вітаємо у Kubii!'));
+        return redirect()->to($destination)->with('success', __('Реєстрацію завершено. Вітаємо у BASH!'));
     }
 
     public function logout(Request $request): RedirectResponse

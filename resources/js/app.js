@@ -2272,7 +2272,7 @@ document.addEventListener('click', (event) => {
     loginForm.hidden = isRegister;
     registerForm.hidden = !isRegister;
     auth.querySelector('[data-auth-kicker]').textContent = isRegister ? t('Новий клієнт') : t('Особистий кабінет');
-    auth.querySelector('[data-auth-title]').textContent = isRegister ? t('Створити профіль') : t('Увійти до Kubii');
+    auth.querySelector('[data-auth-title]').textContent = isRegister ? t('Створити профіль') : t('Увійти до BASH');
     auth.querySelector('[data-auth-description]').textContent = isRegister
         ? t('Збережемо ваші замовлення та контактні дані в одному місці.')
         : t('Переглядайте історію замовлень і оформлюйте покупки швидше.');

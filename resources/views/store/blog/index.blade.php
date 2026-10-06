@@ -1,6 +1,6 @@
 @extends('layouts.store')
 
-@section('title', __('Блог Kubii'))
+@section('title', __('Блог BASH'))
 
 @push('head')
     <x-seo-schema :schema="$seoSchema" />
@@ -11,7 +11,7 @@
         <div class="breadcrumbs"><a href="{{ localized_route('home') }}">{{ __('Головна') }}</a> / <span>{{ __('Блог') }}</span></div>
 
         <header class="blog-index-header">
-            <h1>{{ __('Блог Kubii') }}</h1>
+            <h1>{{ __('Блог BASH') }}</h1>
             <p>{{ __('Корисні статті про туризм, кемпінг, риболовлю та вибір спорядження.') }}</p>
         </header>
 

@@ -97,7 +97,7 @@ class ProductImageArchive
             $seenUrls[$url] = true;
 
             $response = Http::timeout(30)
-                ->withHeaders(['User-Agent' => 'Kubii/1.0'])
+                ->withHeaders(['User-Agent' => 'BASH/1.0'])
                 ->get($url);
 
             if (! $response->successful()) {

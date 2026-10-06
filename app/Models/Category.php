@@ -500,8 +500,8 @@ class Category extends Model
         }
 
         return $locale === 'ru'
-            ? "{$titlePrefix} купить в Украине — Kubii"
-            : "{$titlePrefix} купити в Україні — Kubii";
+            ? "{$titlePrefix} купить в Украине — BASH"
+            : "{$titlePrefix} купити в Україні — BASH";
     }
 
     public function metaDescription(?string $locale = null): string
@@ -521,8 +521,8 @@ class Category extends Model
 
         $name = mb_strtolower(trim((string) $this->translated('name', $locale)));
         $fallback = $locale === 'ru'
-            ? "Покупайте {$name} в интернет-магазине Kubii. Товары для рыболовли, туризма и кемпинга с доставкой по Украине. Удобный выбор, актуальные цены и качественное снаряжение."
-            : "Купуйте {$name} в інтернет-магазині Kubii. Товари для риболовлі, туризму та кемпінгу з доставкою по Україні. Зручний вибір, актуальні ціни та якісне спорядження.";
+            ? "Покупайте {$name} в интернет-магазине BASH. Товары для рыболовли, туризма и кемпинга с доставкой по Украине. Удобный выбор, актуальные цены и качественное снаряжение."
+            : "Купуйте {$name} в інтернет-магазині BASH. Товари для риболовлі, туризму та кемпінгу з доставкою по Україні. Зручний вибір, актуальні ціни та якісне спорядження.";
 
         return str($fallback)->limit(155)->toString();
     }
@@ -574,8 +574,8 @@ class Category extends Model
         $titlePrefix = trim("{$name} {$filterSuffix}");
 
         return $locale === 'ru'
-            ? "{$titlePrefix} купить в Украине — Kubii"
-            : "{$titlePrefix} купити в Україні — Kubii";
+            ? "{$titlePrefix} купить в Украине — BASH"
+            : "{$titlePrefix} купити в Україні — BASH";
     }
 
     public function filteredMetaDescription(string $filterSuffix, ?string $locale = null): string
@@ -590,8 +590,8 @@ class Category extends Model
         $name = mb_strtolower(trim((string) $this->translated('name', $locale)));
         $suffix = mb_strtolower($filterSuffix);
         $fallback = $locale === 'ru'
-            ? "Покупайте {$name} {$suffix} в интернет-магазине Kubii. Товары для рыболовли, туризма и кемпинга с доставкой по Украине. Удобный выбор, актуальные цены и качественное снаряжение."
-            : "Купуйте {$name} {$suffix} в інтернет-магазині Kubii. Товари для риболовлі, туризму та кемпінгу з доставкою по Україні. Зручний вибір, актуальні ціни та якісне спорядження.";
+            ? "Покупайте {$name} {$suffix} в интернет-магазине BASH. Товары для рыболовли, туризма и кемпинга с доставкой по Украине. Удобный выбор, актуальные цены и качественное снаряжение."
+            : "Купуйте {$name} {$suffix} в інтернет-магазині BASH. Товари для риболовлі, туризму та кемпінгу з доставкою по Україні. Зручний вибір, актуальні ціни та якісне спорядження.";
 
         return str($fallback)->limit(155)->toString();
     }

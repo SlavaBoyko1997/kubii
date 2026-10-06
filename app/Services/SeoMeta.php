@@ -18,11 +18,11 @@ class SeoMeta
     public function home(): array
     {
         return $this->make(
-            title: 'Kubii',
-            description: __('Kubii — спорядження для туризму, кемпінгу та риболовлі з доставкою по Україні.'),
+            title: 'BASH',
+            description: __('BASH — спорядження для туризму, кемпінгу та риболовлі з доставкою по Україні.'),
             url: localized_route('home'),
             image: $this->defaultImage(),
-            imageAlt: __('Kubii — спорядження для туризму та риболовлі'),
+            imageAlt: __('BASH — спорядження для туризму та риболовлі'),
         );
     }
 
@@ -67,7 +67,7 @@ class SeoMeta
             : __('Пошук товарів');
         $description = $query !== ''
             ? __('Результати пошуку товарів за запитом «:query».', ['query' => $query])
-            : __('Пошук товарів у каталозі Kubii.');
+            : __('Пошук товарів у каталозі BASH.');
 
         return $this->make($title, $description, $url);
     }
@@ -104,8 +104,8 @@ class SeoMeta
     public function generic(?string $title = null, ?string $description = null, ?string $url = null): array
     {
         return $this->make(
-            title: $title ?: 'Kubii',
-            description: $description ?: __('Kubii — спорядження для туризму, кемпінгу та риболовлі з доставкою по Україні.'),
+            title: $title ?: 'BASH',
+            description: $description ?: __('BASH — спорядження для туризму, кемпінгу та риболовлі з доставкою по Україні.'),
             url: $url ?: request()->url(),
         );
     }
@@ -119,9 +119,9 @@ class SeoMeta
         ?string $imageAlt = null,
         array $extra = [],
     ): array {
-        $title = $this->plainText($title) ?: 'Kubii';
+        $title = $this->plainText($title) ?: 'BASH';
         $description = Str::limit(
-            $this->plainText($description) ?: $title.' — Kubii.',
+            $this->plainText($description) ?: $title.' — BASH.',
             180,
             '…',
         );
@@ -137,7 +137,7 @@ class SeoMeta
             'image_alt' => $this->plainText($imageAlt ?: $title),
             'url' => $this->absoluteUrl($url),
             'type' => $type,
-            'site_name' => 'Kubii',
+            'site_name' => 'BASH',
             'locale' => Locale::isRussian() ? 'ru_RU' : 'uk_UA',
             'locale_alternates' => [Locale::isRussian() ? 'uk_UA' : 'ru_RU'],
             'twitter_card' => 'summary_large_image',

@@ -69,7 +69,7 @@ class GoogleCustomerReviews
 
     public static function deliveryCountry(Order $order): string
     {
-        // Kubii ships via Nova Poshta in Ukraine; orders have no country column yet.
+        // BASH ships via Nova Poshta in Ukraine; orders have no country column yet.
         return 'UA';
     }
 

@@ -6,7 +6,7 @@
 // all read from here, so they never fall out of sync.
 
 return [
-    'name' => 'Kubii',
+    'name' => 'BASH',
 
     'domain' => env('APP_URL', 'https://kubii.com.ua'),
 

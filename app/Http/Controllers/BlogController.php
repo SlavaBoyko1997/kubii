@@ -19,8 +19,8 @@ class BlogController extends Controller
             ->withQueryString();
 
         $url = localized_route('blog.index');
-        $title = __('Блог Kubii');
-        $description = __('Корисні статті про туризм, кемпінг, риболовлю та вибір спорядження від Kubii.');
+        $title = __('Блог BASH');
+        $description = __('Корисні статті про туризм, кемпінг, риболовлю та вибір спорядження від BASH.');
 
         return view('store.blog.index', [
             'posts' => $posts,
