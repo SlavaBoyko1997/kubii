@@ -42,10 +42,13 @@ return [
     ],
 
     'contacts' => [
-        'email' => env('STORE_CONTACT_EMAIL', 'hello@kubii.com.ua'),
+        'email' => env('STORE_CONTACT_EMAIL'),
 
-        // Залиште null, доки номера немає — він просто не показуватиметься на сайті.
-        'phone' => env('STORE_CONTACT_PHONE'),
+        'phone' => env('STORE_CONTACT_PHONE', '+38 (099) 148-73-48'),
+
+        'telegram' => env('STORE_CONTACT_TELEGRAM', 'https://t.me/+380991487348'),
+
+        'instagram' => env('STORE_CONTACT_INSTAGRAM', 'https://www.instagram.com/bash.camp/'),
     ],
 
     // Єдиний графік роботи для футера, сторінки контактів і structured data.
@@ -59,5 +62,5 @@ return [
         ['days' => ['Saturday'], 'opens' => '10:00', 'closes' => '15:00'],
     ],
 
-    'delivery_carriers' => ['Нова Пошта', 'Укрпошта'],
+    'delivery_carriers' => ['Нова Пошта'],
 ];

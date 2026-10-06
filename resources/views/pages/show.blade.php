@@ -29,6 +29,10 @@
                     </ul>
                 @endif
 
+                @foreach($section['paragraphs_after'] ?? [] as $paragraph)
+                    <p>{{ $paragraph }}</p>
+                @endforeach
+
                 @if(! empty($section['details']))
                     <dl class="legal-page-details">
                         @foreach($section['details'] as $label => $detail)
@@ -55,8 +59,8 @@
                 @endif
             @endforeach
 
-            @if(($page ?? null) !== 'contacts' && \App\Support\StoreInfo::email())
-                <p class="legal-page-contact">{{ __('Для уточнення інформації напишіть нам на') }} <a href="mailto:{{ \App\Support\StoreInfo::email() }}">{{ \App\Support\StoreInfo::email() }}</a>.</p>
+            @if(($page ?? null) !== 'contacts' && \App\Support\StoreInfo::phone())
+                <p class="legal-page-contact">{{ __('Для уточнення інформації телефонуйте') }} <a href="tel:{{ preg_replace('/[^\d+]/', '', \App\Support\StoreInfo::phone()) }}">{{ \App\Support\StoreInfo::phone() }}</a>.</p>
             @endif
         </article>
     </div>

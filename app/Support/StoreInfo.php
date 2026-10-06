@@ -64,6 +64,16 @@ class StoreInfo
         return self::phone() !== null;
     }
 
+    public static function telegramUrl(): ?string
+    {
+        return filled(config('store.contacts.telegram')) ? (string) config('store.contacts.telegram') : null;
+    }
+
+    public static function instagramUrl(): ?string
+    {
+        return filled(config('store.contacts.instagram')) ? (string) config('store.contacts.instagram') : null;
+    }
+
     public static function schedule(?string $locale = null): string
     {
         return self::localized('store.schedule', $locale);

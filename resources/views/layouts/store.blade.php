@@ -118,7 +118,7 @@
     <div class="topbar">
         <div class="container">
             <div class="top-links"><a href="{{ localized_route('pages.show', 'about') }}">{{ __('Про нас') }}</a><a href="{{ localized_route('pages.show', 'delivery') }}">{{ __('Доставка і оплата') }}</a><a href="{{ localized_route('pages.show', 'warranty') }}">{{ __('Гарантія') }}</a><a href="{{ localized_route('blog.index') }}">{{ __('Блог') }}</a><a href="{{ localized_route('brands.index') }}">{{ __('Бренди') }}</a><a href="{{ localized_route('pages.show', 'contacts') }}">{{ __('Контакти') }}</a></div>
-            <div class="top-links">@if(\App\Support\StoreInfo::email())<a href="mailto:{{ \App\Support\StoreInfo::email() }}">{{ \App\Support\StoreInfo::email() }}</a>@endif @include('store._social-links', ['class' => 'topbar-social'])<a class="language-link" href="{{ \App\Support\Locale::switchUrl(app()->getLocale() === 'uk' ? 'ru' : 'uk') }}" aria-label="{{ app()->getLocale() === 'uk' ? 'Перейти на російську' : 'Перейти на українську' }}">@if(app()->getLocale() === 'uk')<i class="ukraine-flag" aria-hidden="true"></i><b>UK</b>@else<b>RU</b>@endif</a></div>
+            <div class="top-links">@if(\App\Support\StoreInfo::phone())<a href="tel:{{ preg_replace('/[^\d+]/', '', \App\Support\StoreInfo::phone()) }}">{{ \App\Support\StoreInfo::phone() }}</a>@endif @if(\App\Support\StoreInfo::email())<a href="mailto:{{ \App\Support\StoreInfo::email() }}">{{ \App\Support\StoreInfo::email() }}</a>@endif @include('store._social-links', ['class' => 'topbar-social'])<a class="language-link" href="{{ \App\Support\Locale::switchUrl(app()->getLocale() === 'uk' ? 'ru' : 'uk') }}" aria-label="{{ app()->getLocale() === 'uk' ? 'Перейти на російську' : 'Перейти на українську' }}">@if(app()->getLocale() === 'uk')<i class="ukraine-flag" aria-hidden="true"></i><b>UK</b>@else<b>RU</b>@endif</a></div>
         </div>
     </div>
     <header class="main-header">
@@ -261,7 +261,7 @@
 
     <footer class="site-footer">
         <div class="container footer-grid">
-            <div><a class="footer-brand" href="{{ localized_route('home') }}" aria-label="BASH">@include('store._logo')</a><p class="footer-tagline">{{ __('Спорядження для туризму, кемпінгу та риболовлі з доставкою по Україні.') }}</p><p>@if(\App\Support\StoreInfo::email())<a href="mailto:{{ \App\Support\StoreInfo::email() }}">{{ \App\Support\StoreInfo::email() }}</a><br>@endif{{ \App\Support\StoreInfo::schedule() }}</p><p class="footer-social-label">{{ __('Ми в соцмережах') }}</p>@include('store._social-links', ['class' => 'footer-social'])</div>
+            <div><a class="footer-brand" href="{{ localized_route('home') }}" aria-label="BASH">@include('store._logo')</a><p class="footer-tagline">{{ __('Спорядження для туризму, кемпінгу та риболовлі з доставкою по Україні.') }}</p><p>@if(\App\Support\StoreInfo::phone())<a href="tel:{{ preg_replace('/[^\d+]/', '', \App\Support\StoreInfo::phone()) }}">{{ \App\Support\StoreInfo::phone() }}</a><br>@endif@if(\App\Support\StoreInfo::email())<a href="mailto:{{ \App\Support\StoreInfo::email() }}">{{ \App\Support\StoreInfo::email() }}</a><br>@endif{{ \App\Support\StoreInfo::schedule() }}</p><p class="footer-social-label">{{ __('Ми в соцмережах') }}</p>@include('store._social-links', ['class' => 'footer-social'])</div>
             @if(($footerCategories ?? collect())->isNotEmpty())
                 <div>
                     <h3>{{ __('Категорії товарів') }}</h3>

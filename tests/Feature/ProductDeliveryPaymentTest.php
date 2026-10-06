@@ -32,8 +32,11 @@ class ProductDeliveryPaymentTest extends TestCase
         $this->get($product->url())
             ->assertOk()
             ->assertSee('Доставка', false)
-            ->assertSee('Нова Пошта по Україні', false)
+            ->assertSee('Нова Пошта · відділення / поштомат', false)
             ->assertSee('Безкоштовна доставка від 3 000 ₴', false)
+            ->assertSee('Кур’єр: Київ 499 ₴ · Бориспіль 199 ₴', false)
+            ->assertSee('Самовивіз зі складу у Борисполі', false)
+            ->assertSee('Мін. замовлення 500 ₴ · від 20 000 ₴ — повна оплата', false)
             ->assertSee('Детальніше про доставку та оплату', false)
             ->assertSee('Оплата карткою на сайті', false)
             ->assertSee('Післяплата у Новій Пошті', false);

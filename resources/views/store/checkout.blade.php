@@ -195,11 +195,13 @@
                                 <span>
                                     <strong>{{ __($paymentOption->name) }}</strong>
                                     @if($paymentOption->code === 'iban')
-                                        <small>{{ __('Після оформлення менеджер надасть реквізити для переказу') }}</small>
+                                        <small>{{ __('Безготівково на рахунок ФОП · реквізити після підтвердження') }}</small>
                                     @elseif($paymentOption->code === 'mono_checkout')
                                         <small>{{ __('Google Pay, Apple Pay або карткою. Сума блокується до підтвердження менеджером') }}</small>
+                                    @elseif($paymentOption->code === 'liqpay_hold')
+                                        <small>{{ __('Онлайн-оплата карткою на сайті') }}</small>
                                     @elseif($paymentOption->code === 'cash_on_delivery')
-                                        <small>{{ __('Оплата під час отримання у відділенні або поштоматі') }}</small>
+                                        <small>{{ __('Післяплата на відділенні · комісія 2% + 20 ₴') }}</small>
                                     @endif
                                 </span>
                             </label>
