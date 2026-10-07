@@ -1005,7 +1005,7 @@ class PageController extends Controller
     {
         abort_unless(isset(self::PAGES[$page]), 404);
 
-        $data = $cache->remember('page:v12:'.$page, fn (): array => $this->pageData($page));
+        $data = $cache->remember('page:v13:'.$page, fn (): array => $this->pageData($page));
         $url = localized_route('pages.show', $page);
         $type = match ($page) {
             'about' => 'AboutPage',
@@ -1143,13 +1143,30 @@ class PageController extends Controller
     private function sellerDetails(string $locale): array
     {
         $labels = $locale === 'ru'
-            ? ['seller' => 'Продавец', 'address' => 'Адрес для корреспонденции', 'schedule' => 'График работы', 'tax' => 'ИНН/ЕГРПОУ']
-            : ['seller' => 'Продавець', 'address' => 'Адреса для листування', 'schedule' => 'Графік роботи', 'tax' => 'ІПН/ЄДРПОУ'];
+            ? [
+                'seller' => 'Продавец',
+                'director' => 'Директор',
+                'address' => 'Адрес для корреспонденции',
+                'schedule' => 'График работы',
+                'tax' => 'ЕГРПОУ',
+            ]
+            : [
+                'seller' => 'Продавець',
+                'director' => 'Директор',
+                'address' => 'Адреса для листування',
+                'schedule' => 'Графік роботи',
+                'tax' => 'ЄДРПОУ',
+            ];
 
         $details = [
             $labels['seller'] => ['text' => StoreInfo::legalName($locale)],
-            $labels['address'] => ['text' => StoreInfo::address($locale)],
         ];
+
+        if (StoreInfo::director($locale) !== '') {
+            $details[$labels['director']] = ['text' => StoreInfo::director($locale)];
+        }
+
+        $details[$labels['address']] = ['text' => StoreInfo::address($locale)];
 
         if (StoreInfo::hasPhone()) {
             $details['Телефон'] = ['href' => 'tel:'.$this->telHref((string) StoreInfo::phone()), 'text' => (string) StoreInfo::phone()];

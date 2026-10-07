@@ -15,12 +15,18 @@ return [
     'seller' => [
         // ФОП / ТОВ і ПІБ або назва юридичної особи.
         'legal_name' => [
-            'uk' => env('STORE_SELLER_LEGAL_NAME_UK', "ФОП Солов'ян Ілона Юріївна"),
-            'ru' => env('STORE_SELLER_LEGAL_NAME_RU', 'ФЛП Соловьян Илона Юрьевна'),
+            'uk' => env('STORE_SELLER_LEGAL_NAME_UK', 'Товариство з обмеженою відповідальністю "Овлікс"'),
+            'ru' => env('STORE_SELLER_LEGAL_NAME_RU', 'Общество с ограниченной ответственностью «Овликс»'),
+        ],
+
+        // ПІБ директора / керівника.
+        'director' => [
+            'uk' => env('STORE_SELLER_DIRECTOR_UK', 'Харченко Олег Іванович'),
+            'ru' => env('STORE_SELLER_DIRECTOR_RU', 'Харченко Олег Иванович'),
         ],
 
         // ЄДРПОУ (юр. особа) або РНОКПП/ІПН (фіз. особа-підприємець).
-        'tax_id' => env('STORE_SELLER_TAX_ID', '3674302504'),
+        'tax_id' => env('STORE_SELLER_TAX_ID', '46404239'),
 
         'country' => 'UA',
 

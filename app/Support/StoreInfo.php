@@ -24,6 +24,11 @@ class StoreInfo
         return self::localized('store.seller.legal_name', $locale);
     }
 
+    public static function director(?string $locale = null): string
+    {
+        return self::localized('store.seller.director', $locale);
+    }
+
     public static function taxId(): string
     {
         return (string) config('store.seller.tax_id');
