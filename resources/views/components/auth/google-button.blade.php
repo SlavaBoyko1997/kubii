@@ -1,3 +1,4 @@
+@if(\App\Support\GoogleAuth::enabled())
 <a class="auth-google-button" href="{{ localized_route('auth.google.redirect') }}">
     <span class="auth-google-button__icon" aria-hidden="true">
         <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
@@ -9,3 +10,4 @@
     </span>
     <span class="auth-google-button__text">{{ __('Продовжити через Google') }}</span>
 </a>
+@endif

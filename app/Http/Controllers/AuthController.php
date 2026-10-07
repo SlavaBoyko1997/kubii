@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Rules\PhoneNumber;
 use App\Support\Cart;
+use App\Support\GoogleAuth;
 use App\Support\GuestCustomerProfile;
 use App\Support\Locale;
 use Illuminate\Http\JsonResponse;
@@ -74,8 +75,14 @@ class AuthController extends Controller
 
     public function redirectToGoogle(): RedirectResponse
     {
+        if (! GoogleAuth::enabled()) {
+            return redirect()
+                ->to(localized_route('login'))
+                ->withErrors(['login' => __('Вхід через Google тимчасово недоступний.')]);
+        }
+
         return Socialite::driver('google')
-            ->redirectUrl($this->googleCallbackUrl())
+            ->redirectUrl(GoogleAuth::redirectUri())
             ->scopes(['openid', 'profile', 'email'])
             ->redirect();
     }
@@ -84,7 +91,7 @@ class AuthController extends Controller
     {
         try {
             $googleUser = Socialite::driver('google')
-                ->redirectUrl($this->googleCallbackUrl())
+                ->redirectUrl(GoogleAuth::redirectUri())
                 ->user();
         } catch (Throwable) {
             return redirect()
@@ -260,17 +267,6 @@ class AuthController extends Controller
         $request->session()->regenerateToken();
 
         return redirect()->to(localized_route('home'))->with('success', __('Ви вийшли з кабінету.'));
-    }
-
-    private function googleCallbackUrl(): string
-    {
-        $path = Locale::route('auth.google.callback', [], false, Locale::DEFAULT);
-
-        if (app()->environment('local')) {
-            return rtrim((string) config('app.url'), '/').$path;
-        }
-
-        return url($path);
     }
 
     private function resolvePostAuthDestination(Request $request, Cart $cart): string
