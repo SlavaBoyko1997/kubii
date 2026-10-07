@@ -62,6 +62,7 @@ class AppUrl
         }
 
         $host = trim((string) ($request->headers->get('X-Forwarded-Host') ?: $request->getHost()));
+        $host = preg_replace('/:(?:80|443)$/', '', $host) ?? $host;
         $scheme = strtolower(trim(explode(',', (string) ($request->headers->get('X-Forwarded-Proto') ?: $request->getScheme()))[0]));
 
         $configured = self::configuredOrigin();
