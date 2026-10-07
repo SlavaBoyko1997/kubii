@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Services\SeoMeta;
 use App\Services\SeoSchema;
 use App\Support\CatalogCache;
-use App\Support\FreeDelivery;
 use App\Support\Locale;
 use App\Support\StoreInfo;
 use Illuminate\View\View;
