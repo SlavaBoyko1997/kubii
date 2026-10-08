@@ -219,7 +219,9 @@ class Product extends Model
 
     public function scopeVisibleInCatalog(Builder $query): Builder
     {
-        return $query->where('is_visible_in_catalog', true);
+        return $query
+            ->where('products.is_visible_in_catalog', true)
+            ->whereHas('category');
     }
 
     public function scopePurchasable(Builder $query): Builder

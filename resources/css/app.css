@@ -1530,7 +1530,7 @@ form.is-loading[data-cart-quantity-form] [data-quantity-change] { opacity: .55; 
     .checkout-order-item { grid-template-columns: 76px 1fr; gap: 10px; }
     .checkout-order-image { width: 76px; height: 70px; }
     .checkout-order-price { grid-column: 1 / -1; justify-items: start; text-align: left; }
-    .catalog-popup { top: max(10px, env(safe-area-inset-top)); left: 50%; width: calc(100% - 16px); height: min(82vh, calc(100dvh - 24px - env(safe-area-inset-bottom, 0px))); max-height: calc(100dvh - 24px - env(safe-area-inset-bottom, 0px)); overflow: hidden; -webkit-overflow-scrolling: touch; border: 1px solid var(--line); border-radius: 18px; padding: 0; transform: translate(-50%, -10px); }
+    .catalog-popup { z-index: 40; top: max(10px, env(safe-area-inset-top)); left: 50%; width: calc(100% - 16px); height: min(82vh, calc(100dvh - 24px - env(safe-area-inset-bottom, 0px))); max-height: calc(100dvh - 24px - env(safe-area-inset-bottom, 0px)); overflow: hidden; -webkit-overflow-scrolling: touch; border: 1px solid var(--line); border-radius: 18px; padding: 0; transform: translate(-50%, -10px); }
     .catalog-popup.is-open { transform: translate(-50%, 0); }
     .catalog-popup .popup-head { position: sticky; top: 0; z-index: 3; display: flex; padding: 12px 16px; background: #fff; border-bottom: 1px solid var(--line); }
     .catalog-popup .popup-head span { display: none; }

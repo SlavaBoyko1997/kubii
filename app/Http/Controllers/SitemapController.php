@@ -269,7 +269,8 @@ class SitemapController extends Controller
         return Product::query()
             ->where('is_active', true)
             ->where('is_indexable', true)
-            ->where('canonical_type', 'self');
+            ->where('canonical_type', 'self')
+            ->whereHas('category');
     }
 
     private function productionRobots(): string
