@@ -421,7 +421,7 @@ const catalogMenu = catalog?.querySelector('[data-catalog-menu]');
 const catalogNav = document.querySelector('[data-catalog-nav]');
 let catalogMenuRequest = null;
 let megaCloseTimer = null;
-const catalogMenuVersion = 'mega-v7';
+const catalogMenuVersion = 'mega-v8';
 
 const loadCatalogMenu = async () => {
     if (!catalogMenu || !catalogMenuUrl || (catalogMenu.dataset.loaded === 'true' && catalogMenu.dataset.version === catalogMenuVersion)) return;

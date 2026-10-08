@@ -9,6 +9,9 @@
         @php($branches = $category['all_children'] ?? $category['children'] ?? [])
         <div class="mega-panel {{ $index === 0 ? 'is-active' : '' }}" data-mega-panel="{{ $category['id'] }}">
             <div class="mega-panel-inner">
+                @if(filled($category['url'] ?? null))
+                    <a class="mega-panel-all" href="{{ $category['url'] }}"><span>{{ __('Усі товари розділу') }}</span><b>{{ $category['name'] }}</b><i aria-hidden="true">→</i></a>
+                @endif
                 <div class="mega-columns">
                     @forelse($branches as $child)
                         @php($leaves = array_values($child['all_children'] ?? $child['children'] ?? []))
