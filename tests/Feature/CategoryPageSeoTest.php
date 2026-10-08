@@ -213,7 +213,7 @@ class CategoryPageSeoTest extends TestCase
         $this->assertStringNotContainsString('filter=', $this->link($html, 'canonical'));
     }
 
-    public function test_path_based_filters_remain_indexable_without_filter_query_canonical(): void
+    public function test_single_path_filter_is_indexable_and_combined_filters_are_not(): void
     {
         $category = Category::create([
             'name' => 'Спальні мішки',
@@ -237,12 +237,19 @@ class CategoryPageSeoTest extends TestCase
         app(CatalogCache::class)->invalidate();
 
         $html = $this->followingRedirects()
-            ->get($category->catalogUrl(['brand' => ['Tramp'], 'season' => ['Зимові']]))
+            ->get($category->catalogUrl(['brand' => ['Tramp']]))
             ->assertOk()
             ->getContent();
 
         $this->assertStringContainsString('name="robots" content="index, follow"', $html);
         $this->assertStringNotContainsString('?filter=', $this->link($html, 'canonical'));
+
+        $combinedHtml = $this->followingRedirects()
+            ->get($category->catalogUrl(['brand' => ['Tramp'], 'season' => ['Зимові']]))
+            ->assertOk()
+            ->getContent();
+
+        $this->assertStringContainsString('name="robots" content="noindex, follow"', $combinedHtml);
     }
 
     public function test_paginated_category_page_adds_page_number_to_seo_tags(): void

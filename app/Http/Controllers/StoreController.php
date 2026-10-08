@@ -677,7 +677,8 @@ class StoreController extends Controller
             'in_stock' => $inStock ? 1 : null,
             'on_sale' => $onSale ? 1 : null,
         ], fn ($value): bool => $value !== null && $value !== [] && $value !== false);
-        $usesFilterQueryParameter = $this->catalogUsesFilterQueryParameter($category, $request);
+        $isNonIndexableFilterPage = $this->catalogUsesFilterQueryParameter($category, $request)
+            || ($category && count($this->compactCatalogQuery($request->query())['pathTokens']) > 1);
         $data = [
             ...$cachedData,
             'deferFilterHydration' => $deferInitialFilters,
@@ -686,7 +687,7 @@ class StoreController extends Controller
             'currentBrandSlug' => $this->lockedBrand['slug'] ?? null,
             'search' => $search,
             'canonicalUrl' => $this->canonicalCatalogUrl($category, $request),
-            'seoRobots' => $usesFilterQueryParameter ? 'noindex, follow' : 'index, follow',
+            'seoRobots' => $isNonIndexableFilterPage ? 'noindex, follow' : 'index, follow',
             'showcaseCategories' => $showcaseCategories,
             'catalogBaseUrl' => $this->catalogUrl($category, []),
             'resetUrl' => $this->catalogUrl($category, Arr::only($request->query(), ['search', 'sort', 'per_page'])),

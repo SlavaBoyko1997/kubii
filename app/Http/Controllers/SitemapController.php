@@ -275,8 +275,15 @@ class SitemapController extends Controller
 
     private function productionRobots(): string
     {
+        $blockedCrawlers = [
+            'GPTBot', 'ClaudeBot', 'Claude-Web', 'anthropic-ai', 'CCBot', 'Bytespider', 'Amazonbot',
+            'meta-externalagent', 'GoogleOther', 'Google-Extended', 'Reflectionbot', 'AhrefsBot',
+            'SemrushBot', 'MJ12bot', 'DotBot', 'PetalBot', 'DataForSeoBot', 'BLEXBot', 'serpstatbot',
+            'Barkrowler', 'ImagesiftBot', 'Timpibot', 'SeekportBot',
+        ];
+
         $lines = [
-            'User-agent: GPTBot',
+            ...array_map(fn (string $crawler): string => 'User-agent: '.$crawler, $blockedCrawlers),
             'Disallow: /',
             '',
             'User-agent: *',
@@ -285,6 +292,27 @@ class SitemapController extends Controller
             '# Back office and framework endpoints',
             'Disallow: /admin/',
             'Disallow: /livewire/',
+            '',
+            '# Personal, cart and on-site search pages',
+            'Disallow: /search',
+            'Disallow: /cart',
+            'Disallow: /checkout',
+            'Disallow: /account',
+            'Disallow: /favorites',
+            'Disallow: /comparison',
+            'Disallow: /login',
+            'Disallow: /register',
+            'Disallow: /ru/search',
+            'Disallow: /ru/cart',
+            'Disallow: /ru/checkout',
+            'Disallow: /ru/account',
+            'Disallow: /ru/favorites',
+            'Disallow: /ru/comparison',
+            'Disallow: /ru/login',
+            'Disallow: /ru/register',
+            '',
+            '# Only single-filter landing pages are indexable',
+            'Disallow: /*/search/*/*/',
             '',
             '# Internal JSON and tracking endpoints',
             'Disallow: /catalog-menu',

@@ -15,7 +15,11 @@ class RobotsTxtTest extends TestCase
         $response
             ->assertOk()
             ->assertHeader('Content-Type', 'text/plain; charset=UTF-8')
-            ->assertSee("User-agent: GPTBot\nDisallow: /", false)
+            ->assertSee("User-agent: GPTBot\n", false)
+            ->assertSee("User-agent: ClaudeBot\n", false)
+            ->assertSee("User-agent: SeekportBot\nDisallow: /\n", false)
+            ->assertSee('Disallow: /*/search/*/*/', false)
+            ->assertSee('Disallow: /checkout', false)
             ->assertSee("User-agent: *\nAllow: /", false)
             ->assertSee('Disallow: /admin/', false)
             ->assertSee('Disallow: /ru/search/suggestions', false)
