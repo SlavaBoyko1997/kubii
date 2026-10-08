@@ -197,9 +197,8 @@ body.panel-open { overflow: hidden; }
 .brand, .footer-brand { display: inline-flex; align-items: center; }
 .brand { flex-shrink: 0; color: var(--forest-900); }
 .logo-mark { width: 142px; height: auto; max-height: 44px; flex-shrink: 0; object-fit: contain; filter: drop-shadow(0 8px 14px rgba(66, 65, 11, .14)); }
-.catalog-button, .hero-button, .promo-button { border: 0; border-radius: 7px; background: var(--gold-600); color: #fff; padding: 13px 19px; font-size: 12px; font-weight: 800; text-transform: uppercase; transition: .18s ease; }
-.catalog-button:hover, .hero-button:hover, .promo-button:hover, .primary-button:hover, .buy-button:hover { filter: brightness(1.06); transform: translateY(-1px); }
-.catalog-button { background: var(--forest-900); color: #fff; min-width: 154px; box-shadow: 0 7px 16px rgba(66, 65, 11, .18); }
+.hero-button, .promo-button { border: 0; border-radius: 7px; background: var(--gold-600); color: #fff; padding: 13px 19px; font-size: 12px; font-weight: 800; text-transform: uppercase; transition: .18s ease; }
+.hero-button:hover, .promo-button:hover, .primary-button:hover, .buy-button:hover { filter: brightness(1.06); transform: translateY(-1px); }
 .search { display: flex; align-items: center; gap: 10px; flex: 1; max-width: 430px; border: 1px solid var(--line); border-radius: 8px; background: rgba(172, 166, 16, .05); padding: 10px 15px; color: var(--muted); font-size: 13px; }
 .search input { width: 100%; border: 0; outline: 0; background: transparent; }
 .search button { display: grid; width: 27px; height: 27px; flex-shrink: 0; place-items: center; border: 0; padding: 0; background: transparent; color: var(--gold-700); }
@@ -1321,7 +1320,7 @@ form.is-loading[data-cart-quantity-form] [data-quantity-change] { opacity: .55; 
     body { padding-bottom: 71px; background: #fff; }
     .main-header { top: 0; }
     .container { width: min(100% - 24px, 560px); }
-    .topbar, .catalog-button, .catalog-nav, .search, .header-action span, .list-link, .features, .promo { display: none; }
+    .topbar, .catalog-nav, .search, .header-action span, .list-link, .features, .promo { display: none; }
     .mobile-only { display: inline-flex; }
     .main-header .container { height: 66px; }
     .brand .logo-mark { width: 108px; max-height: 30px; }

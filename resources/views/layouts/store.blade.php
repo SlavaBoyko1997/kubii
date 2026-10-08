@@ -124,9 +124,7 @@
     <header class="main-header">
         <div class="container">
             <button class="mobile-only menu-trigger" type="button" data-open-catalog aria-label="{{ __('Каталог') }}"><x-heroicon-o-bars-3 /></button>
-            <a class="brand" href="{{ localized_route('home') }}" aria-label="BASH">@include('store._logo')</a>
-            <button class="catalog-button" type="button" data-open-catalog>{{ __('Каталог товарів') }} ☰</button>
-            <form class="search" action="{{ localized_route('search.index') }}" method="GET" data-smart-search>
+            <a class="brand" href="{{ localized_route('home') }}" aria-label="BASH">@include('store._logo')</a>            <form class="search" action="{{ localized_route('search.index') }}" method="GET" data-smart-search>
                 <input name="q" value="{{ request('q') }}" placeholder="{{ __('Пошук товарів...') }}" autocomplete="off" data-smart-search-input>
                 <button aria-label="{{ __('Знайти') }}"><x-heroicon-o-magnifying-glass /></button>
             </form>
