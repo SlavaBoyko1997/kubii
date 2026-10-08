@@ -1536,7 +1536,7 @@ form.is-loading[data-cart-quantity-form] [data-quantity-change] { opacity: .55; 
     .catalog-popup .popup-head h2 { margin: 0; font-size: 17px; }
     .catalog-popup .popup-all { display: none; }
     .mega-desktop { display: block; flex: 1; min-height: 0; overflow: auto; }
-    .mega-roots { flex-shrink: 0; position: relative; top: auto; z-index: 2; display: flex; gap: 8px; overflow-x: auto; padding: 10px 16px 12px; background: #fff; border-bottom: 1px solid var(--line); scrollbar-width: none; }
+    .mega-roots { flex-shrink: 0; position: relative; top: auto; z-index: 2; display: flex; flex-wrap: wrap; gap: 8px; padding: 10px 16px 12px; background: #fff; border-bottom: 1px solid var(--line); scrollbar-width: none; }
     .mega-roots::-webkit-scrollbar { display: none; }
     .mega-roots button { flex-shrink: 0; display: inline-flex !important; width: auto; align-items: center; gap: 0; border: 1px solid var(--line) !important; border-radius: 999px !important; padding: 9px 13px !important; background: #fff !important; color: var(--ink); font-size: 11px; font-weight: 600; letter-spacing: .04em; line-height: 1; text-transform: uppercase; transform: none !important; }
     .mega-roots button.is-current { border-color: var(--forest-900) !important; background: var(--forest-900) !important; color: #fff; }
