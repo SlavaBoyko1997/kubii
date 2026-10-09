@@ -408,20 +408,26 @@ class CatalogCacheTest extends TestCase
     {
         $root = Category::create([
             'name' => 'Головний напрям',
-            'slug' => 'home-show-root',
+            'slug' => 'sporiadzennia',
+            'is_active' => true,
+        ]);
+        $bivak = Category::create([
+            'name' => 'Бівак',
+            'slug' => 'sporiadzennia-bivak',
+            'parent_id' => $root->id,
             'is_active' => true,
         ]);
         $child = Category::create([
-            'name' => 'Намети',
-            'slug' => 'home-show-tents',
-            'parent_id' => $root->id,
+            'name' => 'Спальні мішки',
+            'slug' => 'sporiadzennia-bivak-spalni-miski',
+            'parent_id' => $bivak->id,
             'is_active' => true,
             'show_on_home' => true,
         ]);
         $hidden = Category::create([
             'name' => 'Прихована',
-            'slug' => 'home-show-hidden',
-            'parent_id' => $root->id,
+            'slug' => 'sporiadzennia-bivak-pryhovana',
+            'parent_id' => $bivak->id,
             'is_active' => true,
             'show_on_home' => false,
         ]);
@@ -437,11 +443,15 @@ class CatalogCacheTest extends TestCase
             ]);
         }
 
-        $names = collect(app(CatalogCache::class)->homeCategories())->pluck('name')->all();
+        $homeCategories = collect(app(CatalogCache::class)->homeCategories());
+        $names = $homeCategories->pluck('name')->all();
+        $sleepingBag = $homeCategories->firstWhere('name', 'Спальні мішки');
 
         $this->assertContains('Головний напрям', $names);
-        $this->assertContains('Намети', $names);
+        $this->assertContains('Спальні мішки', $names);
         $this->assertNotContains('Прихована', $names);
+        $this->assertSame('/sporiadzennia/spalni-miski/', $sleepingBag['url'] ?? null);
+        $this->get($sleepingBag['url'])->assertOk();
     }
 
     public function test_stale_catalog_warm_progress_does_not_block_a_new_refresh(): void

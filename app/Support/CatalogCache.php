@@ -104,7 +104,7 @@ class CatalogCache
      */
     public function homeRootCategories(): array
     {
-        return $this->remember('home-root-categories:v3', function (): array {
+        return $this->remember('home-root-categories:v4', function (): array {
             return $this->mapHomeCategories(
                 Category::query()
                     ->whereNull('parent_id')
@@ -112,7 +112,7 @@ class CatalogCache
                     ->where('name', '!=', 'ІБІС Зброя')
                     ->orderBy('sort_order')
                     ->orderBy('name')
-                    ->get(['id', 'name', 'name_ru', 'slug', 'slug_ru', 'image_url', 'image_path']),
+                    ->get($this->homeCategoryColumns()),
             );
         });
     }
@@ -124,19 +124,20 @@ class CatalogCache
      */
     public function homeCategories(): array
     {
-        return $this->remember('home-categories:v1', function (): array {
+        return $this->remember('home-categories:v2', function (): array {
             $roots = $this->homeRootCategories();
             $rootIds = array_column($roots, 'id');
 
             $extra = $this->mapHomeCategories(
                 Category::query()
+                    ->with('parentRecursive')
                     ->where('show_on_home', true)
                     ->where('is_active', true)
                     ->where('name', '!=', 'ІБІС Зброя')
                     ->whereNotNull('parent_id')
                     ->orderBy('sort_order')
                     ->orderBy('name')
-                    ->get(['id', 'name', 'name_ru', 'slug', 'slug_ru', 'image_url', 'image_path']),
+                    ->get($this->homeCategoryColumns()),
             );
 
             $extra = array_values(array_filter(
@@ -146,6 +147,14 @@ class CatalogCache
 
             return [...$roots, ...$extra];
         });
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function homeCategoryColumns(): array
+    {
+        return ['id', 'parent_id', 'name', 'name_ru', 'slug', 'slug_ru', 'image_url', 'image_path'];
     }
 
     /**
