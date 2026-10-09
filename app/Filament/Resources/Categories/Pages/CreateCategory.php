@@ -43,7 +43,7 @@ class CreateCategory extends CreateRecord
      */
     protected function preserveFormDataWhenCreatingAnother(array $data): array
     {
-        return Arr::only($data, ['parent_id', 'is_active', 'visible_filters']);
+        return Arr::only($data, ['parent_id', 'is_active', 'show_on_home', 'visible_filters']);
     }
 
     protected function getRedirectUrl(): string

@@ -65,7 +65,7 @@ class StoreController extends Controller
         $data = $cache->remember('home:v6', fn (): array => $selections->resolve());
 
         return view('store.home', [
-            'categories' => collect($cache->homeRootCategories()),
+            'categories' => collect($cache->homeCategories()),
             'heroSlides' => $this->heroSlides(),
             'saleProducts' => $this->productsByCachedIds($data['saleProductIds'] ?? []),
             'topRatedProducts' => $this->productsByCachedIds($data['topRatedProductIds'] ?? []),

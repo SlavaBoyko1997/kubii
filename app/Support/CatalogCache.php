@@ -100,30 +100,73 @@ class CatalogCache
     }
 
     /**
-     * @return list<array{name: string, url: string, image_src: ?string}>
+     * @return list<array{id: int, name: string, url: string, image_src: ?string}>
      */
     public function homeRootCategories(): array
     {
-        return $this->remember('home-root-categories:v2', function (): array {
-            $counts = $this->categoryProductCounts();
-            $locale = Locale::current();
-
-            return Category::query()
-                ->whereNull('parent_id')
-                ->where('is_active', true)
-                ->where('name', '!=', 'ІБІС Зброя')
-                ->orderBy('sort_order')
-                ->get(['id', 'name', 'name_ru', 'slug', 'slug_ru', 'image_url', 'image_path'])
-                ->filter(fn (Category $category): bool => ($counts[$category->id] ?? 0) > 0)
-                ->map(fn (Category $category): array => [
-                    'id' => $category->id,
-                    'name' => $category->translated('name'),
-                    'url' => $category->catalogUrl(absolute: false, locale: $locale),
-                    'image_src' => $this->categoryImageSrc($category->id),
-                ])
-                ->values()
-                ->all();
+        return $this->remember('home-root-categories:v3', function (): array {
+            return $this->mapHomeCategories(
+                Category::query()
+                    ->whereNull('parent_id')
+                    ->where('is_active', true)
+                    ->where('name', '!=', 'ІБІС Зброя')
+                    ->orderBy('sort_order')
+                    ->orderBy('name')
+                    ->get(['id', 'name', 'name_ru', 'slug', 'slug_ru', 'image_url', 'image_path']),
+            );
         });
+    }
+
+    /**
+     * Root categories plus extra categories marked to appear on the homepage.
+     *
+     * @return list<array{id: int, name: string, url: string, image_src: ?string}>
+     */
+    public function homeCategories(): array
+    {
+        return $this->remember('home-categories:v1', function (): array {
+            $roots = $this->homeRootCategories();
+            $rootIds = array_column($roots, 'id');
+
+            $extra = $this->mapHomeCategories(
+                Category::query()
+                    ->where('show_on_home', true)
+                    ->where('is_active', true)
+                    ->where('name', '!=', 'ІБІС Зброя')
+                    ->whereNotNull('parent_id')
+                    ->orderBy('sort_order')
+                    ->orderBy('name')
+                    ->get(['id', 'name', 'name_ru', 'slug', 'slug_ru', 'image_url', 'image_path']),
+            );
+
+            $extra = array_values(array_filter(
+                $extra,
+                fn (array $category): bool => ! in_array($category['id'], $rootIds, true),
+            ));
+
+            return [...$roots, ...$extra];
+        });
+    }
+
+    /**
+     * @param  Collection<int, Category>  $categories
+     * @return list<array{id: int, name: string, url: string, image_src: ?string}>
+     */
+    private function mapHomeCategories(Collection $categories): array
+    {
+        $counts = $this->categoryProductCounts();
+        $locale = Locale::current();
+
+        return $categories
+            ->filter(fn (Category $category): bool => ($counts[$category->id] ?? 0) > 0)
+            ->map(fn (Category $category): array => [
+                'id' => $category->id,
+                'name' => $category->translated('name'),
+                'url' => $category->catalogUrl(absolute: false, locale: $locale),
+                'image_src' => $this->categoryImageSrc($category->id),
+            ])
+            ->values()
+            ->all();
     }
 
     public function categoryImageSrc(int $categoryId): ?string

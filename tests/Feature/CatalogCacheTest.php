@@ -404,6 +404,46 @@ class CatalogCacheTest extends TestCase
         $this->assertSame('Головна категорія', $second[0]['name'] ?? null);
     }
 
+    public function test_home_categories_append_nested_categories_marked_to_show_on_home(): void
+    {
+        $root = Category::create([
+            'name' => 'Головний напрям',
+            'slug' => 'home-show-root',
+            'is_active' => true,
+        ]);
+        $child = Category::create([
+            'name' => 'Намети',
+            'slug' => 'home-show-tents',
+            'parent_id' => $root->id,
+            'is_active' => true,
+            'show_on_home' => true,
+        ]);
+        $hidden = Category::create([
+            'name' => 'Прихована',
+            'slug' => 'home-show-hidden',
+            'parent_id' => $root->id,
+            'is_active' => true,
+            'show_on_home' => false,
+        ]);
+
+        foreach ([$root, $child, $hidden] as $category) {
+            Product::create([
+                'category_id' => $category->id,
+                'name' => 'Товар '.$category->slug,
+                'slug' => 'product-'.$category->slug,
+                'price' => 800,
+                'stock' => 2,
+                'is_active' => true,
+            ]);
+        }
+
+        $names = collect(app(CatalogCache::class)->homeCategories())->pluck('name')->all();
+
+        $this->assertContains('Головний напрям', $names);
+        $this->assertContains('Намети', $names);
+        $this->assertNotContains('Прихована', $names);
+    }
+
     public function test_stale_catalog_warm_progress_does_not_block_a_new_refresh(): void
     {
         $progress = app(CatalogCacheWarmProgress::class);

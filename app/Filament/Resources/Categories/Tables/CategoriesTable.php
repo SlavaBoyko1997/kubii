@@ -42,6 +42,10 @@ class CategoriesTable
                 IconColumn::make('is_active')
                     ->label('Активна')
                     ->boolean(),
+                IconColumn::make('show_on_home')
+                    ->label('На головній')
+                    ->boolean()
+                    ->toggleable(),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

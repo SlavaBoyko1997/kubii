@@ -326,6 +326,7 @@ class WarmCatalogCache extends Command
     {
         $cache->remember('home:v6', fn (): array => app(HomeCatalogSelections::class)->resolve());
         $cache->homeRootCategories();
+        $cache->homeCategories();
     }
 
     private function warmInternalRequest(Kernel $kernel, string $path, string $accept): \Symfony\Component\HttpFoundation\Response

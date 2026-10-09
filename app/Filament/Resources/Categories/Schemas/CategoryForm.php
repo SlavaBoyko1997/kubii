@@ -61,10 +61,17 @@ class CategoryForm
                                 ->visible(fn (?Category $record): bool => $record !== null)
                                 ->columnSpan(1),
                         ]),
-                        Toggle::make('is_active')
-                            ->label('Активна')
-                            ->default(true)
-                            ->inline(false),
+                        Grid::make(2)->schema([
+                            Toggle::make('is_active')
+                                ->label('Активна')
+                                ->default(true)
+                                ->inline(false),
+                            Toggle::make('show_on_home')
+                                ->label('Відображати на головній')
+                                ->helperText('Кореневі категорії і так є на головній. Увімкніть, щоб додати цю категорію окремою карткою.')
+                                ->default(false)
+                                ->inline(false),
+                        ]),
                     ]),
 
                 Section::make('Імпорт з фіду')

@@ -48,18 +48,20 @@ class Category extends Model
         'seo_faq_ru',
         'ai_seo_generated_at',
         'sort_order',
+        'is_active',
+        'show_on_home',
         'visible_filters',
         'visible_spec_filters',
         'visible_spec_filters_ru',
         'filter_labels',
         'filter_labels_ru',
-        'is_active',
     ];
 
     protected function casts(): array
     {
         return [
             'is_active' => 'boolean',
+            'show_on_home' => 'boolean',
             'visible_filters' => 'array',
             'visible_spec_filters' => 'array',
             'visible_spec_filters_ru' => 'array',
