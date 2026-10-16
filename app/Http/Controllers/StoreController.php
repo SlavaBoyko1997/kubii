@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Category;
 use App\Models\BlogPost;
+use App\Models\Category;
 use App\Models\HeroSlide;
 use App\Models\Product;
 use App\Models\ProductVariantGroup;
@@ -223,6 +223,43 @@ class StoreController extends Controller
 
                 if ($redirectCategory && $redirectCategory->is_active) {
                     return redirect()->to($redirectCategory->catalogUrl($request->query()), 301);
+                }
+            }
+
+            $oldRoot = (string) $segments->first();
+            $rootRedirectId = $oldRoot === $candidatePath
+                ? null
+                : DB::table('category_slug_redirects')
+                    ->where('old_path', $oldRoot)
+                    ->value('category_id');
+
+            if ($rootRedirectId) {
+                $rootRedirect = Category::query()->find($rootRedirectId);
+
+                if ($rootRedirect && $rootRedirect->is_active) {
+                    $rewritten = $segments->all();
+                    $rewritten[0] = mb_strtolower($rootRedirect->publicSlug());
+                    $rewrittenPath = implode('/', $rewritten);
+                    $rewrittenId = $pathIndex['canonical'][$rewrittenPath] ?? $pathIndex['legacy'][$rewrittenPath] ?? null;
+                    $rewrittenCategory = $rewrittenId
+                        ? Category::query()
+                            ->with([
+                                'parentRecursive',
+                                'childrenRecursive.parentRecursive',
+                                'parent.children.parentRecursive',
+                            ])
+                            ->find($rewrittenId)
+                        : null;
+
+                    if ($rewrittenCategory && $rewrittenCategory->is_active) {
+                        $query = $request->query();
+
+                        if ($filterTokens !== []) {
+                            $query['filter'] = implode(';', $filterTokens);
+                        }
+
+                        return redirect()->to($rewrittenCategory->catalogUrl($query), 301);
+                    }
                 }
             }
         }
@@ -707,9 +744,9 @@ class StoreController extends Controller
             : ($data['showAdminFilterControls']
                 ? AppUrl::sanitizeHtmlUrls(view('store._catalog-filter-fields', $data)->render())
                 : AppUrl::sanitizeHtmlUrls($this->rememberCatalogPayload($cache,
-                'catalog-filter-fields-html:v2:'.$filterScope.':'.$filterQueryHash,
-                fn (): string => view('store._catalog-filter-fields', $data)->render(),
-            )));
+                    'catalog-filter-fields-html:v2:'.$filterScope.':'.$filterQueryHash,
+                    fn (): string => view('store._catalog-filter-fields', $data)->render(),
+                )));
 
         if ($filtersOnly) {
             $profiler->checkpoint('filter_view_data');
@@ -826,7 +863,25 @@ class StoreController extends Controller
     public function productPath(string $rootCategory, Product $product, ProductPopularity $popularity, SeoSchema $seoSchema, SeoMeta $seoMeta, Request $request): View|RedirectResponse
     {
         abort_unless($product->is_active, 404);
-        abort_unless($product->rootCategorySlug() === mb_strtolower($rootCategory), 404);
+
+        $requestedRoot = mb_strtolower($rootCategory);
+        $canonicalRoot = $product->rootCategorySlug();
+
+        if ($canonicalRoot !== $requestedRoot) {
+            $redirectRootId = DB::table('category_slug_redirects')
+                ->where('old_path', $requestedRoot)
+                ->value('category_id');
+            $root = $product->rootCategory();
+
+            abort_unless(
+                $redirectRootId
+                    && $root
+                    && (int) $redirectRootId === (int) $root->id,
+                404,
+            );
+
+            return redirect()->to($product->url(), 301);
+        }
 
         if ($request->segment(count($request->segments())) !== $product->getRawOriginal('slug')) {
             return redirect()->to($product->url(), 301);

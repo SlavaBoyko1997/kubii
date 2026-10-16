@@ -298,7 +298,7 @@ body.panel-open { overflow: hidden; }
 .product-card { position: relative; overflow: hidden; border: 1px solid var(--line); border-radius: 8px; background: #fff; box-shadow: 0 6px 18px rgba(66, 65, 11, .045); transition: .2s ease; }
 .product-card:hover { border-color: var(--gold-600); box-shadow: 0 14px 30px rgba(66, 65, 11, .1); transform: translateY(-3px); }
 .product-image { position: relative; display: block; height: 205px; background: #fbfcfb; }
-.product-image img { width: 100%; height: 100%; object-fit: contain; }
+.product-image img { width: 100%; height: 100%; padding: 16px; box-sizing: border-box; object-fit: contain; }
 .discount-label { position: absolute; z-index: 1; top: 9px; left: 9px; border-radius: 5px; padding: 5px 7px; background: #e55d3e; color: #fff; font-size: 11px; font-weight: 600; }
 .variant-count-label { position: absolute; z-index: 1; top: 9px; right: 9px; border: 1px solid var(--line); border-radius: 999px; padding: 5px 8px; background: rgba(255,255,255,.94); color: var(--forest-800); font-size: 10px; font-weight: 700; box-shadow: 0 6px 14px rgba(66, 65, 11, .08); }
 .stock-label { position: absolute; z-index: 1; right: 9px; bottom: 9px; border-radius: 5px; padding: 5px 7px; background: rgba(62, 69, 58, .88); color: #fff; font-size: 10px; font-weight: 700; }
@@ -891,6 +891,7 @@ form.is-loading[data-cart-quantity-form] [data-quantity-change] { opacity: .55; 
 .checkout-step-actions .primary-button { min-width: 190px; }
 .checkout-payment-options { display: grid; gap: 10px; margin: 0; border: 0; padding: 0; }
 .checkout-payment-options > label { position: relative; display: grid; grid-template-columns: 22px 54px minmax(0, 1fr); gap: 12px; align-items: center; cursor: pointer; border: 1px solid #dfe5db; border-radius: 10px; padding: 14px; background: #fff; transition: .18s ease; }
+.checkout-payment-options > label[hidden] { display: none; }
 .checkout-payment-options > label:hover { border-color: #a9bd9d; background: #fbfdf9; }
 .checkout-payment-options > label:has(input:checked) { border-color: var(--forest-700); background: var(--forest-50); box-shadow: 0 0 0 3px rgba(66, 65, 11, .1); }
 .checkout-payment-options input { width: 18px; height: 18px; margin: 0; accent-color: var(--forest-700); }
@@ -910,6 +911,7 @@ form.is-loading[data-cart-quantity-form] [data-quantity-change] { opacity: .55; 
 .payment-method-mono-badge-apple::before { content: ""; display: inline-block; width: 10px; height: 12px; margin-right: 2px; background: currentColor; -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 814 1000'%3E%3Cpath d='M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-163.7-39.5c-76.5 0-103.7 40.8-165.9 40.8s-105.6-57-155.5-127.4C46.7 790.7 0 663 0 541.8c0-194.4 126.4-297.5 250.8-297.5 66.1 0 121.2 43.4 162.7 43.4 39.5 0 101.5-46 176.3-46 28.5 0 130.9 2.6 198.3 99.2zm-234-181.5c31.1-36.9 53.1-88.1 53.1-139.3 0-7.1-.6-14.3-1.9-20.1-50.6 1.9-110.8 33.7-147.1 75.8-28.5 32.4-55.1 83.6-55.1 135.5 0 7.8 1.3 15.6 1.9 18.1 3.2.6 8.4 1.3 13.6 1.3 45.4 0 102.5-30.4 135.5-71.3z'/%3E%3C/svg%3E") center/contain no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 814 1000'%3E%3Cpath d='M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-163.7-39.5c-76.5 0-103.7 40.8-165.9 40.8s-105.6-57-155.5-127.4C46.7 790.7 0 663 0 541.8c0-194.4 126.4-297.5 250.8-297.5 66.1 0 121.2 43.4 162.7 43.4 39.5 0 101.5-46 176.3-46 28.5 0 130.9 2.6 198.3 99.2zm-234-181.5c31.1-36.9 53.1-88.1 53.1-139.3 0-7.1-.6-14.3-1.9-20.1-50.6 1.9-110.8 33.7-147.1 75.8-28.5 32.4-55.1 83.6-55.1 135.5 0 7.8 1.3 15.6 1.9 18.1 3.2.6 8.4 1.3 13.6 1.3 45.4 0 102.5-30.4 135.5-71.3z'/%3E%3C/svg%3E") center/contain no-repeat; }
 .payment-method-icon-nova-poshta { padding: 8px 5px; border-color: #f1d5d5; }
 .payment-method-icon-nova-poshta img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.payment-method-icon-store { padding: 4px; border-color: #d5e4cb; }
 .checkout-payment-result { max-width: 620px; border-radius: 8px; padding: 11px 14px; background: var(--forest-50); color: #435148; }
 .liqpay-redirect-state form { margin-top: 4px; }
 .checkout-account-prompt { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 12px; align-items: center; margin-top: 14px; border: 1px solid #c8d9bc; border-radius: 11px; padding: 12px; background: linear-gradient(135deg, #f1f7ec, #fbfdf9); box-shadow: 0 7px 18px rgba(42, 76, 26, .07); }
@@ -955,6 +957,16 @@ form.is-loading[data-cart-quantity-form] [data-quantity-change] { opacity: .55; 
 .nova-poshta-types label.is-disabled .nova-poshta-type-icon { background: #eceeeb; color: #9da39a; }
 .nova-poshta-type-icon { width: 32px; height: 32px; flex: 0 0 32px; border-radius: 7px; padding: 5px; background: #fff0f0; color: #d71920; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.8; }
 .nova-poshta-types label:has(input:checked) .nova-poshta-type-icon { background: #d71920; color: #fff; }
+.nova-poshta-types label:has(input[value="warehouse_pickup"]) .nova-poshta-type-icon { background: #eef5ea; color: var(--forest-700); }
+.nova-poshta-types label:has(input[value="warehouse_pickup"]:checked) { border-color: var(--forest-700); background: #f1f6ed; }
+.nova-poshta-types label:has(input[value="warehouse_pickup"]:checked) .nova-poshta-type-icon { background: var(--forest-700); color: #fff; }
+.warehouse-pickup-card { display: grid; gap: 4px; margin-top: 12px; border: 1px solid #b9d0aa; border-radius: 9px; padding: 12px 13px; background: #f1f7ed; }
+.warehouse-pickup-card[hidden] { display: none; }
+.warehouse-pickup-card strong { color: var(--forest-950); font-size: 13px; }
+.warehouse-pickup-card p { margin: 0; color: var(--forest-900); font-size: 13px; font-weight: 700; }
+.warehouse-pickup-card small { color: #6e7d72; font-size: 11px; line-height: 1.45; }
+.nova-poshta-details { display: grid; gap: 10px; }
+.nova-poshta-details[hidden] { display: none; }
 .nova-poshta-types span { display: grid; gap: 2px; }
 .nova-poshta-types strong { color: var(--forest-950); font-size: 12px; }
 .nova-poshta-types small { color: #7a8676; font-size: 10px; font-weight: 600; }

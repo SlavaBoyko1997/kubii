@@ -64,7 +64,21 @@
                                 </div>
                             @endforeach
                         </div>
-                        @if($order->delivery_type && str_starts_with($order->delivery_type, 'nova_poshta_'))
+                        @if(\App\Support\WarehousePickup::isPickup($order->delivery_type))
+                            <section class="account-delivery-card">
+                                <div class="account-delivery-brand">
+                                    <div><span>{{ __('Спосіб доставки') }}</span><strong>{{ __('Самовивіз зі складу') }}</strong></div>
+                                </div>
+                                <div class="account-delivery-grid">
+                                    @if($order->city)
+                                        <div><span>{{ __('Місто') }}</span><strong>{{ $order->city }}</strong></div>
+                                    @endif
+                                    @if($order->delivery_address)
+                                        <div class="wide"><span>{{ __('Адреса складу') }}</span><strong>{{ $order->delivery_address }}</strong></div>
+                                    @endif
+                                </div>
+                            </section>
+                        @elseif($order->delivery_type && str_starts_with($order->delivery_type, 'nova_poshta_'))
                             @php
                                 $isPostomat = $order->delivery_type === 'nova_poshta_postomat';
                                 $isCourier = $order->delivery_type === 'nova_poshta_courier';
@@ -117,6 +131,7 @@
                                 'iban' => 'Оплата на IBAN',
                                 'cash_on_delivery' => 'Післяплата у Новій Пошті',
                                 'card_on_delivery' => 'Карткою при отриманні',
+                                'pay_in_store' => 'Оплата в магазині',
                                 default => $order->payment_method,
                             });
                             $paymentStatusLabel = __(match($order->payment_status) {

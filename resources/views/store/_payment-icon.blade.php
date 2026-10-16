@@ -16,6 +16,14 @@
             <path d="m32 10 20 8H12l20-8Zm-15 12h5v10h-5V22Zm10 0h5v10h-5V22Zm10 0h5v10h-5V22Zm10 0h5v10h-5V22ZM11 35h42" fill="none" stroke="#2559a7" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
     </span>
+@elseif($method === 'pay_in_store')
+    <span {{ $attributes->class(['payment-method-icon', 'payment-method-icon-store']) }} aria-hidden="true">
+        <svg viewBox="0 0 64 44" role="img">
+            <rect x="2" y="4" width="60" height="36" rx="9" fill="#eef5ea"/>
+            <path d="M14 24 32 12l18 12v14H14V24Z" fill="none" stroke="#3d5a2c" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M26 38V28h12v10" fill="none" stroke="#3d5a2c" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+    </span>
 @else
     <span {{ $attributes->class(['payment-method-icon', 'payment-method-icon-nova-poshta']) }} aria-hidden="true">
         <img src="{{ asset('images/nova-poshta-logo.png') }}" alt="" width="1654" height="651">

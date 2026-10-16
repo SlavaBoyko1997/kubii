@@ -1008,6 +1008,16 @@ const updateDeliveryPriceEstimate = async () => {
         ? ''
         : (root.querySelector('[data-nova-poshta-point-ref]')?.value.trim() ?? '');
 
+    if (deliveryType === 'warehouse_pickup') {
+        if (deliveryLabel) {
+            deliveryLabel.textContent = t('Безкоштовно');
+        }
+        deliveryPriceRoot?.classList.add('is-free-delivery');
+        priceEstimate.textContent = '';
+        priceEstimate.setAttribute('hidden', '');
+        return;
+    }
+
     if (!url || !cityRef) {
         priceEstimate.textContent = deliveryPriceRoot?.dataset.freeDeliveryQualified === '1'
             ? ''
@@ -1145,17 +1155,60 @@ if (novaPoshta) {
     const deliveryType = () => novaPoshta.querySelector('input[name="delivery_type"]:checked')?.value ?? 'nova_poshta_warehouse';
     const isPostomat = () => deliveryType() === 'nova_poshta_postomat';
     const isCourier = () => deliveryType() === 'nova_poshta_courier';
+    const isPickup = () => deliveryType() === 'warehouse_pickup';
+    const pickupCard = novaPoshta.querySelector('[data-warehouse-pickup-card]');
+    const novaPoshtaDetails = novaPoshta.querySelector('[data-nova-poshta-details]');
+    const novaPoshtaBrand = document.querySelector('[data-nova-poshta-brand]');
+    const syncCheckoutPayments = () => {
+        const pickup = isPickup();
+        document.querySelectorAll('[data-checkout-payment-for]').forEach((label) => {
+            const input = label.querySelector('input[name="payment_method"]');
+            const hidden = (label.dataset.checkoutPaymentFor === 'pickup' && !pickup)
+                || (label.dataset.checkoutPaymentFor === 'nova_poshta' && pickup);
+            label.hidden = hidden;
+            if (input) {
+                input.disabled = hidden;
+                if (hidden) {
+                    input.checked = false;
+                    input.removeAttribute('required');
+                } else {
+                    input.required = true;
+                }
+            }
+        });
+        const visible = [...document.querySelectorAll('input[name="payment_method"]:not(:disabled)')];
+        if (visible.length && !visible.some((field) => field.checked)) {
+            const preferred = pickup
+                ? visible.find((field) => field.value === 'pay_in_store')
+                : visible[0];
+            (preferred ?? visible[0]).checked = true;
+        }
+    };
     const toggleDeliveryStage = () => {
+        const pickup = isPickup();
         const courier = isCourier();
-        pointStage.hidden = courier;
-        courierStage.hidden = !courier;
-        pointInput.required = !courier;
-        pointInput.disabled = courier || !cityRefInput.value;
-        streetInput.required = courier;
-        streetInput.disabled = !courier || !cityRefInput.value;
-        buildingInput.required = courier;
-        buildingInput.disabled = !courier;
-        flatInput.disabled = !courier;
+        if (pickupCard) pickupCard.hidden = !pickup;
+        if (novaPoshtaDetails) novaPoshtaDetails.hidden = pickup;
+        if (novaPoshtaBrand) novaPoshtaBrand.hidden = pickup;
+        cityInput.required = !pickup;
+        cityInput.disabled = pickup;
+        if (pickup) {
+            cityInput.setCustomValidity('');
+            pointInput.setCustomValidity('');
+            streetInput.setCustomValidity('');
+            buildingInput.setCustomValidity('');
+        }
+        pointStage.hidden = pickup || courier;
+        courierStage.hidden = pickup || !courier;
+        pointInput.required = !pickup && !courier;
+        pointInput.disabled = pickup || courier || !cityRefInput.value;
+        streetInput.required = !pickup && courier;
+        streetInput.disabled = pickup || !courier || !cityRefInput.value;
+        buildingInput.required = !pickup && courier;
+        buildingInput.disabled = pickup || !courier;
+        flatInput.disabled = pickup || !courier;
+        syncCheckoutPayments();
+        scheduleDeliveryPriceUpdate();
     };
     const setNovaPoshtaState = (message = '', error = false) => {
         state.textContent = message;
@@ -1490,6 +1543,11 @@ if (novaPoshta) {
         selectedWarehouse = '';
         selectedStreet = '';
         toggleDeliveryStage();
+        if (isPickup()) {
+            resetPoints();
+            resetCourierFields();
+            return;
+        }
         if (isCourier()) {
             resetPoints();
             prepareCourierStage();
@@ -1506,7 +1564,7 @@ if (novaPoshta) {
     });
 
     toggleDeliveryStage();
-    if (cityRefInput.value && cityInput.value) {
+    if (!isPickup() && cityRefInput.value && cityInput.value) {
         cityInput.setCustomValidity('');
         queueMicrotask(() => {
             if (isCourier()) {
@@ -1522,6 +1580,9 @@ if (novaPoshta) {
 const checkoutNovaPoshtaReady = () => {
     const root = document.querySelector('[data-nova-poshta]');
     if (!root || novaPoshtaPointsLoading) return false;
+
+    const pickupSelected = root.querySelector('input[name="delivery_type"][value="warehouse_pickup"]')?.checked;
+    if (pickupSelected) return true;
 
     const cityRef = root.querySelector('[data-nova-poshta-city-ref]')?.value.trim();
     if (!cityRef) return false;
@@ -1653,6 +1714,11 @@ checkoutWizard?.addEventListener('click', (event) => {
         }
 
         if (incompleteStep === 'delivery' && !checkoutNovaPoshtaReady()) {
+            const pickupSelected = target?.querySelector('input[name="delivery_type"][value="warehouse_pickup"]')?.checked;
+            if (pickupSelected) {
+                return;
+            }
+
             const cityInput = target?.querySelector('[data-nova-poshta-city-input]');
             const pointInput = target?.querySelector('[data-nova-poshta-point-input]');
             const streetInput = target?.querySelector('[data-nova-poshta-street-input]');

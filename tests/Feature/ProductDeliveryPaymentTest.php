@@ -39,7 +39,8 @@ class ProductDeliveryPaymentTest extends TestCase
             ->assertSee('Мін. замовлення 500 ₴ · від 20 000 ₴ — повна оплата', false)
             ->assertSee('Детальніше про доставку та оплату', false)
             ->assertSee('Оплата карткою на сайті', false)
-            ->assertSee('Післяплата у Новій Пошті', false);
+            ->assertSee('Післяплата у Новій Пошті', false)
+            ->assertSee('Оплата в магазині', false);
     }
 
     public function test_product_page_respects_category_payment_restrictions(): void
@@ -68,6 +69,7 @@ class ProductDeliveryPaymentTest extends TestCase
             ->assertOk()
             ->assertSee('Оплата на IBAN', false)
             ->assertDontSee('Оплата карткою на сайті', false)
-            ->assertDontSee('Післяплата у Новій Пошті', false);
+            ->assertDontSee('Післяплата у Новій Пошті', false)
+            ->assertDontSee('Оплата в магазині', false);
     }
 }

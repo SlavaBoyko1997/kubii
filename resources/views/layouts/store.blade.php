@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google-site-verification" content="gCG1qXEgoStIFxCo5j0tvjg2j2R3wNTB2-UxN8gIQSs">
     @php
         $resolvedSeoMeta = $seoMeta ?? app(\App\Services\SeoMeta::class)->generic(
             trim($__env->yieldContent('title', 'BASH')),

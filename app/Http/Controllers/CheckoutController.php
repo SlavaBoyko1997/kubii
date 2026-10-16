@@ -12,6 +12,7 @@ use App\Support\Cart;
 use App\Support\GuestCustomerProfile;
 use App\Support\NovaPoshtaShipment;
 use App\Support\PaymentOptions;
+use App\Support\WarehousePickup;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -27,16 +28,14 @@ class CheckoutController extends Controller
         Cart $cart,
         PaymentOptions $paymentOptions,
         NovaPoshtaShipment $shipment,
-    ): View|RedirectResponse
-    {
+    ): View|RedirectResponse {
         if ($cart->items()->isEmpty()) {
             return redirect()->to(localized_route('cart.index'))->with('error', __('Спочатку додайте товари до кошика.'));
         }
 
         $lastOrder = $request->user()?->orders()
             ->where('order_type', 'standard')
-            ->whereIn('delivery_type', ['nova_poshta_warehouse', 'nova_poshta_postomat', 'nova_poshta_courier'])
-            ->whereNotNull('nova_poshta_city_ref')
+            ->whereIn('delivery_type', ['nova_poshta_warehouse', 'nova_poshta_postomat', 'nova_poshta_courier', WarehousePickup::TYPE])
             ->latest()
             ->first();
 
@@ -45,6 +44,7 @@ class CheckoutController extends Controller
         $defaultDeliveryType = match ($lastOrder?->delivery_type) {
             'nova_poshta_postomat' => $shipmentProfile['postomat_available'] ? 'nova_poshta_postomat' : 'nova_poshta_warehouse',
             'nova_poshta_courier' => 'nova_poshta_courier',
+            WarehousePickup::TYPE => WarehousePickup::TYPE,
             default => 'nova_poshta_warehouse',
         };
         $lastPaymentMethod = $lastOrder?->payment_method;
@@ -120,8 +120,7 @@ class CheckoutController extends Controller
         NovaPoshtaService $novaPoshta,
         NovaPoshtaShipment $shipment,
         PaymentOptions $paymentOptions,
-    ): RedirectResponse
-    {
+    ): RedirectResponse {
         $user = $request->user();
 
         if ($user) {
@@ -140,9 +139,9 @@ class CheckoutController extends Controller
             'patronymic' => ['required', 'string', 'max:80'],
             'phone' => ['required', 'string', 'max:30', new PhoneNumber],
             'email' => ['required', 'email', 'max:255'],
-            'delivery_type' => ['required', Rule::in(['nova_poshta_warehouse', 'nova_poshta_postomat', 'nova_poshta_courier'])],
-            'nova_poshta_city_ref' => ['required', 'string', 'max:50'],
-            'nova_poshta_warehouse_ref' => ['required_unless:delivery_type,nova_poshta_courier', 'nullable', 'string', 'max:50'],
+            'delivery_type' => ['required', Rule::in(['nova_poshta_warehouse', 'nova_poshta_postomat', 'nova_poshta_courier', WarehousePickup::TYPE])],
+            'nova_poshta_city_ref' => ['required_unless:delivery_type,'.WarehousePickup::TYPE, 'nullable', 'string', 'max:50'],
+            'nova_poshta_warehouse_ref' => ['required_unless:delivery_type,nova_poshta_courier,'.WarehousePickup::TYPE, 'nullable', 'string', 'max:50'],
             'nova_poshta_street_ref' => ['required_if:delivery_type,nova_poshta_courier', 'nullable', 'string', 'max:50'],
             'nova_poshta_street_name' => ['required_if:delivery_type,nova_poshta_courier', 'nullable', 'string', 'max:255'],
             'nova_poshta_street_description' => ['nullable', 'string', 'max:255'],
@@ -152,75 +151,49 @@ class CheckoutController extends Controller
             'comment' => ['nullable', 'string', 'max:1000'],
         ], [
             'payment_method.in' => __('Обраний спосіб оплати зараз недоступний. Оберіть інший.'),
-            'nova_poshta_city_ref.required' => __('Оберіть місто зі списку Нової Пошти.'),
+            'nova_poshta_city_ref.required_unless' => __('Оберіть місто зі списку Нової Пошти.'),
             'nova_poshta_warehouse_ref.required_unless' => __('Оберіть відділення або поштомат зі списку.'),
             'nova_poshta_street_ref.required_if' => __('Оберіть вулицю зі списку Нової Пошти.'),
             'nova_poshta_street_name.required_if' => __('Оберіть вулицю зі списку Нової Пошти.'),
             'nova_poshta_building.required_if' => __('Вкажіть номер будинку.'),
         ]);
 
-        try {
-            $city = $novaPoshta->getCityByRef($validated['nova_poshta_city_ref']);
-        } catch (NovaPoshtaException $exception) {
-            report($exception);
-
+        if ($validated['payment_method'] === WarehousePickup::PAYMENT_CODE
+            && $validated['delivery_type'] !== WarehousePickup::TYPE) {
             throw ValidationException::withMessages([
-                'nova_poshta_city_ref' => __('Не вдалося перевірити дані доставки Нової Пошти. Спробуйте ще раз пізніше.'),
+                'payment_method' => __('Оплата в магазині доступна лише при самовивозі зі складу.'),
             ]);
         }
 
-        if (! $city) {
+        if ($validated['delivery_type'] === WarehousePickup::TYPE
+            && $validated['payment_method'] === 'cash_on_delivery') {
             throw ValidationException::withMessages([
-                'nova_poshta_city_ref' => __('Оберіть місто зі списку Нової Пошти.'),
+                'payment_method' => __('Післяплата у Новій Пошті недоступна при самовивозі зі складу.'),
             ]);
         }
 
         $items = $cart->items();
         $shipmentProfile = $shipment->profile($items);
 
-        if ($validated['delivery_type'] === 'nova_poshta_courier') {
-            try {
-                $street = $novaPoshta->findStreet(
-                    $city['Ref'],
-                    $validated['nova_poshta_street_ref'],
-                    $validated['nova_poshta_street_description'] ?? $validated['nova_poshta_street_name'],
-                );
-            } catch (NovaPoshtaException $exception) {
-                report($exception);
-
-                throw ValidationException::withMessages([
-                    'nova_poshta_street_ref' => __('Не вдалося перевірити адресу доставки. Спробуйте ще раз пізніше.'),
-                ]);
-            }
-
-            if (! $street) {
-                throw ValidationException::withMessages([
-                    'nova_poshta_street_ref' => __('Оберіть вулицю зі списку Нової Пошти.'),
-                ]);
-            }
-
-            $building = trim((string) $validated['nova_poshta_building']);
-            $flat = trim((string) ($validated['nova_poshta_flat'] ?? ''));
-            $deliveryAddress = collect([
-                $street['Label'],
-                $building !== '' ? __('буд. :number', ['number' => $building]) : null,
-                $flat !== '' ? __('кв. :number', ['number' => $flat]) : null,
-            ])->filter()->implode(', ');
-
+        if ($validated['delivery_type'] === WarehousePickup::TYPE) {
             $validated = [
                 ...$validated,
-                'city' => $city['Description'],
-                'delivery_address' => $deliveryAddress,
-                'nova_poshta_city_name' => $city['Description'],
-                'nova_poshta_street_name' => $street['Label'],
+                'city' => WarehousePickup::CITY,
+                'delivery_address' => WarehousePickup::fullAddress(),
+                'nova_poshta_city_ref' => null,
+                'nova_poshta_city_name' => null,
                 'nova_poshta_warehouse_ref' => null,
                 'nova_poshta_warehouse_name' => null,
                 'nova_poshta_warehouse_number' => null,
                 'nova_poshta_warehouse_address' => null,
+                'nova_poshta_street_ref' => null,
+                'nova_poshta_street_name' => null,
+                'nova_poshta_building' => null,
+                'nova_poshta_flat' => null,
             ];
         } else {
             try {
-                $warehouse = $novaPoshta->getWarehouseByRef($validated['nova_poshta_warehouse_ref']);
+                $city = $novaPoshta->getCityByRef($validated['nova_poshta_city_ref']);
             } catch (NovaPoshtaException $exception) {
                 report($exception);
 
@@ -229,47 +202,105 @@ class CheckoutController extends Controller
                 ]);
             }
 
-            if (! $warehouse || $warehouse['CityRef'] !== $city['Ref']) {
+            if (! $city) {
                 throw ValidationException::withMessages([
-                    'nova_poshta_warehouse_ref' => __('Оберіть відділення або поштомат у вибраному місті.'),
+                    'nova_poshta_city_ref' => __('Оберіть місто зі списку Нової Пошти.'),
                 ]);
             }
 
-            $expectsPostomat = $validated['delivery_type'] === 'nova_poshta_postomat';
+            if ($validated['delivery_type'] === 'nova_poshta_courier') {
+                try {
+                    $street = $novaPoshta->findStreet(
+                        $city['Ref'],
+                        $validated['nova_poshta_street_ref'],
+                        $validated['nova_poshta_street_description'] ?? $validated['nova_poshta_street_name'],
+                    );
+                } catch (NovaPoshtaException $exception) {
+                    report($exception);
 
-            if ($expectsPostomat && ! $shipmentProfile['postomat_available']) {
-                throw ValidationException::withMessages([
-                    'delivery_type' => __('Поштомат недоступний: у кошику є товар, що перевищує допустиму вагу або габарити. Оберіть вантажне відділення.'),
-                ]);
+                    throw ValidationException::withMessages([
+                        'nova_poshta_street_ref' => __('Не вдалося перевірити адресу доставки. Спробуйте ще раз пізніше.'),
+                    ]);
+                }
+
+                if (! $street) {
+                    throw ValidationException::withMessages([
+                        'nova_poshta_street_ref' => __('Оберіть вулицю зі списку Нової Пошти.'),
+                    ]);
+                }
+
+                $building = trim((string) $validated['nova_poshta_building']);
+                $flat = trim((string) ($validated['nova_poshta_flat'] ?? ''));
+                $deliveryAddress = collect([
+                    $street['Label'],
+                    $building !== '' ? __('буд. :number', ['number' => $building]) : null,
+                    $flat !== '' ? __('кв. :number', ['number' => $flat]) : null,
+                ])->filter()->implode(', ');
+
+                $validated = [
+                    ...$validated,
+                    'city' => $city['Description'],
+                    'delivery_address' => $deliveryAddress,
+                    'nova_poshta_city_name' => $city['Description'],
+                    'nova_poshta_street_name' => $street['Label'],
+                    'nova_poshta_warehouse_ref' => null,
+                    'nova_poshta_warehouse_name' => null,
+                    'nova_poshta_warehouse_number' => null,
+                    'nova_poshta_warehouse_address' => null,
+                ];
+            } else {
+                try {
+                    $warehouse = $novaPoshta->getWarehouseByRef($validated['nova_poshta_warehouse_ref']);
+                } catch (NovaPoshtaException $exception) {
+                    report($exception);
+
+                    throw ValidationException::withMessages([
+                        'nova_poshta_city_ref' => __('Не вдалося перевірити дані доставки Нової Пошти. Спробуйте ще раз пізніше.'),
+                    ]);
+                }
+
+                if (! $warehouse || $warehouse['CityRef'] !== $city['Ref']) {
+                    throw ValidationException::withMessages([
+                        'nova_poshta_warehouse_ref' => __('Оберіть відділення або поштомат у вибраному місті.'),
+                    ]);
+                }
+
+                $expectsPostomat = $validated['delivery_type'] === 'nova_poshta_postomat';
+
+                if ($expectsPostomat && ! $shipmentProfile['postomat_available']) {
+                    throw ValidationException::withMessages([
+                        'delivery_type' => __('Поштомат недоступний: у кошику є товар, що перевищує допустиму вагу або габарити. Оберіть вантажне відділення.'),
+                    ]);
+                }
+
+                if ($warehouse['is_postomat'] !== $expectsPostomat) {
+                    throw ValidationException::withMessages([
+                        'nova_poshta_warehouse_ref' => $expectsPostomat
+                            ? __('Для цього способу доставки потрібно обрати поштомат.')
+                            : __('Для цього способу доставки потрібно обрати звичайне відділення.'),
+                    ]);
+                }
+
+                if (! $expectsPostomat && ! $shipment->warehouseSupports($warehouse, $shipmentProfile)) {
+                    throw ValidationException::withMessages([
+                        'nova_poshta_warehouse_ref' => __('Це відділення не приймає вагу або габарити товарів у кошику. Оберіть вантажне відділення.'),
+                    ]);
+                }
+
+                $validated = [
+                    ...$validated,
+                    'city' => $city['Description'],
+                    'delivery_address' => $warehouse['ShortAddress'] ?: $warehouse['Description'],
+                    'nova_poshta_city_name' => $city['Description'],
+                    'nova_poshta_warehouse_name' => $warehouse['Description'],
+                    'nova_poshta_warehouse_number' => $warehouse['Number'],
+                    'nova_poshta_warehouse_address' => $warehouse['ShortAddress'],
+                    'nova_poshta_street_ref' => null,
+                    'nova_poshta_street_name' => null,
+                    'nova_poshta_building' => null,
+                    'nova_poshta_flat' => null,
+                ];
             }
-
-            if ($warehouse['is_postomat'] !== $expectsPostomat) {
-                throw ValidationException::withMessages([
-                    'nova_poshta_warehouse_ref' => $expectsPostomat
-                        ? __('Для цього способу доставки потрібно обрати поштомат.')
-                        : __('Для цього способу доставки потрібно обрати звичайне відділення.'),
-                ]);
-            }
-
-            if (! $expectsPostomat && ! $shipment->warehouseSupports($warehouse, $shipmentProfile)) {
-                throw ValidationException::withMessages([
-                    'nova_poshta_warehouse_ref' => __('Це відділення не приймає вагу або габарити товарів у кошику. Оберіть вантажне відділення.'),
-                ]);
-            }
-
-            $validated = [
-                ...$validated,
-                'city' => $city['Description'],
-                'delivery_address' => $warehouse['ShortAddress'] ?: $warehouse['Description'],
-                'nova_poshta_city_name' => $city['Description'],
-                'nova_poshta_warehouse_name' => $warehouse['Description'],
-                'nova_poshta_warehouse_number' => $warehouse['Number'],
-                'nova_poshta_warehouse_address' => $warehouse['ShortAddress'],
-                'nova_poshta_street_ref' => null,
-                'nova_poshta_street_name' => null,
-                'nova_poshta_building' => null,
-                'nova_poshta_flat' => null,
-            ];
         }
 
         $guestUserId = null;

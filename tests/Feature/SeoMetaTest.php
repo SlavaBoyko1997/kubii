@@ -13,6 +13,22 @@ class SeoMetaTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_home_includes_google_site_verification_meta(): void
+    {
+        $html = $this->get('/')->assertOk()->getContent();
+
+        $this->assertSame(
+            'gCG1qXEgoStIFxCo5j0tvjg2j2R3wNTB2-UxN8gIQSs',
+            $this->metaName($html, 'google-site-verification'),
+        );
+        $metaPosition = strpos($html, 'name="google-site-verification"');
+        $bodyPosition = strpos($html, '<body');
+
+        $this->assertNotFalse($metaPosition);
+        $this->assertNotFalse($bodyPosition);
+        $this->assertLessThan($bodyPosition, $metaPosition);
+    }
+
     public function test_home_outputs_one_complete_open_graph_and_twitter_card(): void
     {
         $response = $this->get('/')->assertOk();

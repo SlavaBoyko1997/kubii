@@ -46,13 +46,16 @@
                 <section class="checkout-step" id="checkout-delivery" data-checkout-section="delivery">
                     <div class="checkout-step-title nova-poshta-title">
                         <span>3</span>
-                        <div class="nova-poshta-title-copy"><h2>{{ __('Доставка Новою Поштою') }}</h2><small data-checkout-section-status>{{ __('Оберіть місто та точку доставки') }}</small></div>
-                        <div class="nova-poshta-brand" aria-label="{{ __('Нова Пошта') }}">
+                        <div class="nova-poshta-title-copy"><h2>{{ __('Доставка') }}</h2><small data-checkout-section-status>{{ __('Оберіть спосіб отримання замовлення') }}</small></div>
+                        <div class="nova-poshta-brand" data-nova-poshta-brand aria-label="{{ __('Нова Пошта') }}" @if(old('delivery_type', $checkoutDefaults['delivery_type']) === \App\Support\WarehousePickup::TYPE) hidden @endif>
                             <img src="{{ asset('images/nova-poshta-logo.png') }}" alt="{{ __('Нова Пошта') }}" width="1654" height="651">
                         </div>
                     </div>
-                    <p class="nova-poshta-intro">{{ __('Вкажіть місто, оберіть зручний формат отримання і знайдіть потрібну точку або адресу доставки.') }}</p>
-                    @php($selectedDeliveryType = old('delivery_type', $checkoutDefaults['delivery_type']))
+                    <p class="nova-poshta-intro">{{ __('Оберіть самовивіз зі складу в Борисполі або доставку Новою Поштою.') }}</p>
+                    @php
+                        $selectedDeliveryType = old('delivery_type', $checkoutDefaults['delivery_type']);
+                        $isWarehousePickup = $selectedDeliveryType === \App\Support\WarehousePickup::TYPE;
+                    @endphp
                     <div
                         class="form-grid nova-poshta-delivery"
                         data-nova-poshta
@@ -67,27 +70,19 @@
                         data-cargo-only="{{ $shipmentProfile['requires_cargo_warehouse'] ? '1' : '0' }}"
                     >
                         <div class="wide nova-poshta-stage">
-                            <div class="nova-poshta-stage-head"><b>1</b><div><strong>{{ __('Оберіть місто') }}</strong><small>{{ __('Почніть вводити назву та виберіть місто зі списку') }}</small></div></div>
-                            <label class="nova-poshta-city">
-                                <span class="sr-only">{{ __('Місто') }}</span>
-                                <input
-                                    name="nova_poshta_city_name"
-                                    value="{{ old('nova_poshta_city_name', $checkoutDefaults['nova_poshta_city_name']) }}"
-                                    placeholder="{{ __('Наприклад, Київ') }}"
-                                    autocomplete="off"
-                                    data-nova-poshta-city-input
-                                    required
-                                >
-                                <input type="hidden" name="nova_poshta_city_ref" value="{{ old('nova_poshta_city_ref', $checkoutDefaults['nova_poshta_city_ref']) }}" data-nova-poshta-city-ref>
-                                <div class="nova-poshta-suggestions" data-nova-poshta-cities hidden></div>
-                            </label>
-                        </div>
-                        <div class="wide nova-poshta-stage">
-                            <div class="nova-poshta-stage-head"><b>2</b><div><strong>{{ __('Як бажаєте отримати замовлення?') }}</strong><small>{{ __('Відділення приймає більші посилки, поштомат зручний для самостійного отримання') }}</small></div></div>
+                            <div class="nova-poshta-stage-head"><b>1</b><div><strong>{{ __('Як бажаєте отримати замовлення?') }}</strong><small>{{ __('Самовивіз зі складу або доставка Новою Поштою') }}</small></div></div>
                             <fieldset class="nova-poshta-types">
                                 <legend class="sr-only">{{ __('Тип доставки') }}</legend>
                                 <label>
-                                    <input type="radio" name="delivery_type" value="nova_poshta_warehouse" @checked($selectedDeliveryType === 'nova_poshta_warehouse' || (! $shipmentProfile['postomat_available'] && ! in_array($selectedDeliveryType, ['nova_poshta_postomat', 'nova_poshta_courier'], true)))>
+                                    <input type="radio" name="delivery_type" value="{{ \App\Support\WarehousePickup::TYPE }}" @checked($isWarehousePickup)>
+                                    <svg class="nova-poshta-type-icon" viewBox="0 0 32 32" aria-hidden="true">
+                                        <path d="M7 14.5 16 7l9 7.5V26H7V14.5Z"/>
+                                        <path d="M12 26V18h8v8M10 13h12"/>
+                                    </svg>
+                                    <span><strong>{{ __('Самовивіз зі складу') }}</strong><small>{{ __('м. Бориспіль, вул. Київський шлях, 79в') }}</small></span>
+                                </label>
+                                <label>
+                                    <input type="radio" name="delivery_type" value="nova_poshta_warehouse" @checked($selectedDeliveryType === 'nova_poshta_warehouse' || (! $isWarehousePickup && ! $shipmentProfile['postomat_available'] && ! in_array($selectedDeliveryType, ['nova_poshta_postomat', 'nova_poshta_courier'], true)))>
                                     <svg class="nova-poshta-type-icon" viewBox="0 0 32 32" aria-hidden="true">
                                         <path d="M5 13.5 16 5l11 8.5v13H5v-13Z"/>
                                         <path d="M11 26V16h10v10M9 12h14"/>
@@ -116,14 +111,37 @@
                                     <span><strong>{{ __("Кур'єрська доставка") }}</strong><small>{{ __('Доставка за вашою адресою у вибраному місті') }}</small></span>
                                 </label>
                             </fieldset>
+                            <div class="warehouse-pickup-card" data-warehouse-pickup-card @unless($isWarehousePickup) hidden @endunless>
+                                <strong>{{ __('Самовивіз зі складу') }}</strong>
+                                <p>{{ __('м. Бориспіль, вул. Київський шлях, 79в') }}</p>
+                                <small>{{ __('Після підтвердження менеджером можна забрати замовлення самостійно.') }}</small>
+                            </div>
+                        </div>
+                        <div class="wide nova-poshta-details" data-nova-poshta-details @if($isWarehousePickup) hidden @endif>
+                        <div class="wide nova-poshta-stage">
+                            <div class="nova-poshta-stage-head"><b>2</b><div><strong>{{ __('Оберіть місто') }}</strong><small>{{ __('Почніть вводити назву та виберіть місто зі списку') }}</small></div></div>
+                            <label class="nova-poshta-city">
+                                <span class="sr-only">{{ __('Місто') }}</span>
+                                <input
+                                    name="nova_poshta_city_name"
+                                    value="{{ old('nova_poshta_city_name', $checkoutDefaults['nova_poshta_city_name']) }}"
+                                    placeholder="{{ __('Наприклад, Київ') }}"
+                                    autocomplete="off"
+                                    data-nova-poshta-city-input
+                                    @required(! $isWarehousePickup)
+                                    @disabled($isWarehousePickup)
+                                >
+                                <input type="hidden" name="nova_poshta_city_ref" value="{{ old('nova_poshta_city_ref', $checkoutDefaults['nova_poshta_city_ref']) }}" data-nova-poshta-city-ref>
+                                <div class="nova-poshta-suggestions" data-nova-poshta-cities hidden></div>
+                            </label>
+                        </div>
                             @if($shipmentProfile['requires_cargo_warehouse'])
                                 <div class="nova-poshta-cargo-notice">
                                     <strong>{{ __('Потрібне вантажне відділення') }}</strong>
                                     <span>{{ __('У кошику є великогабаритний або важкий товар. Ми покажемо лише відділення, які можуть прийняти таке відправлення.') }}</span>
                                 </div>
                             @endif
-                        </div>
-                        <div class="wide nova-poshta-stage" data-nova-poshta-point-stage @if($selectedDeliveryType === 'nova_poshta_courier') hidden @endif>
+                        <div class="wide nova-poshta-stage" data-nova-poshta-point-stage @if($isWarehousePickup || $selectedDeliveryType === 'nova_poshta_courier') hidden @endif>
                             <div class="nova-poshta-stage-head"><b>3</b><div><strong data-nova-poshta-point-title>{{ __('Оберіть відділення') }}</strong><small data-nova-poshta-point-help>{{ __('Шукайте за номером відділення, вулицею або адресою') }}</small></div></div>
                             <label class="nova-poshta-point-search">
                                 <span class="sr-only" data-nova-poshta-point-label>{{ __('Відділення') }}</span>
@@ -133,8 +151,8 @@
                                     placeholder="{{ __('Спочатку оберіть місто') }}"
                                     autocomplete="off"
                                     data-nova-poshta-point-input
-                                    @required($selectedDeliveryType !== 'nova_poshta_courier')
-                                    @disabled($selectedDeliveryType === 'nova_poshta_courier')
+                                    @required(! $isWarehousePickup && $selectedDeliveryType !== 'nova_poshta_courier')
+                                    @disabled($isWarehousePickup || $selectedDeliveryType === 'nova_poshta_courier')
                                 >
                                 <input type="hidden" name="nova_poshta_warehouse_ref" value="{{ old('nova_poshta_warehouse_ref', $checkoutDefaults['nova_poshta_warehouse_ref']) }}" data-nova-poshta-point-ref>
                                 <div class="nova-poshta-suggestions nova-poshta-point-results" data-nova-poshta-points hidden></div>
@@ -181,6 +199,7 @@
                             </div>
                         </div>
                         <div class="wide nova-poshta-state" data-nova-poshta-state role="status" hidden></div>
+                        </div>
                         <label class="wide nova-poshta-comment">{{ __('Коментар до доставки') }} <small>{{ __('необов’язково') }}</small><textarea name="comment" rows="3" placeholder="{{ __('Наприклад, зателефонуйте перед відправленням') }}">{{ old('comment') }}</textarea></label>
                     </div>
                 </section>
@@ -189,8 +208,12 @@
                     <fieldset class="checkout-payment-options">
                         <legend class="sr-only">{{ __('Спосіб оплати') }}</legend>
                         @forelse($paymentOptions as $paymentOption)
-                            <label>
-                                <input type="radio" name="payment_method" value="{{ $paymentOption->code }}" @checked(old('payment_method', $checkoutDefaults['payment_method']) === $paymentOption->code) required>
+                            @php
+                                $paymentHidden = ($paymentOption->code === \App\Support\WarehousePickup::PAYMENT_CODE && ! $isWarehousePickup)
+                                    || ($paymentOption->code === 'cash_on_delivery' && $isWarehousePickup);
+                            @endphp
+                            <label @if($paymentOption->code === \App\Support\WarehousePickup::PAYMENT_CODE) data-checkout-payment-for="pickup" @elseif($paymentOption->code === 'cash_on_delivery') data-checkout-payment-for="nova_poshta" @endif @if($paymentHidden) hidden @endif>
+                                <input type="radio" name="payment_method" value="{{ $paymentOption->code }}" @checked(! $paymentHidden && old('payment_method', $checkoutDefaults['payment_method']) === $paymentOption->code) @disabled($paymentHidden) required>
                                 @include('store._payment-icon', ['method' => $paymentOption->code])
                                 <span>
                                     <strong>{{ __($paymentOption->name) }}</strong>
@@ -202,6 +225,8 @@
                                         <small>{{ __('Онлайн-оплата карткою на сайті') }}</small>
                                     @elseif($paymentOption->code === 'cash_on_delivery')
                                         <small>{{ __('Післяплата на відділенні · комісія 2% + 20 ₴') }}</small>
+                                    @elseif($paymentOption->code === 'pay_in_store')
+                                        <small>{{ __('Готівка або картка при отриманні на складі в Борисполі') }}</small>
                                     @endif
                                 </span>
                             </label>

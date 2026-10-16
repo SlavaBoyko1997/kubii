@@ -8,10 +8,10 @@ use App\Models\Order;
 use App\Models\PaymentOption;
 use App\Models\Product;
 use App\Models\User;
-use App\Support\CatalogCache;
 use App\Services\CatalogSpecificationFacets;
 use App\Services\IbisFeedImporter;
 use App\Services\NovaPoshtaService;
+use App\Support\CatalogCache;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
@@ -883,6 +883,121 @@ class StoreCheckoutTest extends TestCase
             ...$this->novaPoshtaDelivery(),
             'payment_method' => 'cash_on_delivery',
         ])->assertSessionHasErrors('nova_poshta_city_ref');
+
+        $this->assertDatabaseCount('orders', 0);
+    }
+
+    public function test_checkout_shows_warehouse_pickup_and_pay_in_store(): void
+    {
+        $category = Category::create(['name' => 'Намети', 'slug' => 'pickup-tents']);
+        $product = Product::create([
+            'category_id' => $category->id,
+            'name' => 'Намет самовивіз',
+            'slug' => 'pickup-tent',
+            'price' => 1500,
+            'stock' => 3,
+        ]);
+
+        $this->post(route('cart.store', $product));
+
+        $this->get(route('checkout.create'))
+            ->assertOk()
+            ->assertSee('Самовивіз зі складу')
+            ->assertSee('Київський шлях, 79в')
+            ->assertSee('value="warehouse_pickup"', false)
+            ->assertSee('Оплата в магазині')
+            ->assertSee('value="pay_in_store"', false);
+    }
+
+    public function test_customer_can_place_order_with_warehouse_pickup_and_pay_in_store(): void
+    {
+        $category = Category::create(['name' => 'Намети', 'slug' => 'pickup-order-tents']);
+        $product = Product::create([
+            'category_id' => $category->id,
+            'name' => 'Намет зі складу',
+            'slug' => 'warehouse-pickup-tent',
+            'price' => 1800,
+            'stock' => 4,
+        ]);
+
+        $this->post(route('cart.store', $product));
+
+        $response = $this->post(route('checkout.store'), [
+            'last_name' => 'Петренко',
+            'first_name' => 'Іван',
+            'patronymic' => 'Петрович',
+            'phone' => '+380991234567',
+            'email' => 'pickup@example.com',
+            'delivery_type' => 'warehouse_pickup',
+            'payment_method' => 'pay_in_store',
+        ]);
+
+        $order = Order::query()->firstOrFail();
+        $response->assertRedirect(route('checkout.success', $order));
+        $this->assertDatabaseHas('orders', [
+            'id' => $order->id,
+            'delivery_type' => 'warehouse_pickup',
+            'city' => 'Бориспіль',
+            'delivery_address' => 'вул. Київський шлях, 79в, Бориспіль',
+            'payment_method' => 'pay_in_store',
+            'nova_poshta_city_ref' => null,
+            'nova_poshta_warehouse_ref' => null,
+        ]);
+        $this->get(route('checkout.success', $order))
+            ->assertOk()
+            ->assertSee('Самовивіз зі складу')
+            ->assertSee('Оплата в магазині')
+            ->assertSee('Київський шлях, 79в');
+    }
+
+    public function test_pay_in_store_is_rejected_without_warehouse_pickup(): void
+    {
+        $category = Category::create(['name' => 'Намети', 'slug' => 'pickup-pay-mismatch']);
+        $product = Product::create([
+            'category_id' => $category->id,
+            'name' => 'Намет оплата',
+            'slug' => 'pickup-pay-mismatch-tent',
+            'price' => 1200,
+            'stock' => 2,
+        ]);
+
+        $this->post(route('cart.store', $product));
+
+        $this->post(route('checkout.store'), [
+            'last_name' => 'Петренко',
+            'first_name' => 'Іван',
+            'patronymic' => 'Петрович',
+            'phone' => '+380991234567',
+            'email' => 'pickup-mismatch@example.com',
+            ...$this->novaPoshtaDelivery(),
+            'payment_method' => 'pay_in_store',
+        ])->assertSessionHasErrors('payment_method');
+
+        $this->assertDatabaseCount('orders', 0);
+    }
+
+    public function test_cash_on_delivery_is_rejected_with_warehouse_pickup(): void
+    {
+        $category = Category::create(['name' => 'Намети', 'slug' => 'pickup-cod']);
+        $product = Product::create([
+            'category_id' => $category->id,
+            'name' => 'Намет післяплата',
+            'slug' => 'pickup-cod-tent',
+            'price' => 1100,
+            'stock' => 2,
+        ]);
+
+        $this->post(route('cart.store', $product));
+
+        $this->post(route('checkout.store'), [
+            'last_name' => 'Петренко',
+            'first_name' => 'Іван',
+            'patronymic' => 'Петрович',
+            'phone' => '+380991234567',
+            'email' => 'pickup-cod@example.com',
+            'delivery_type' => 'warehouse_pickup',
+            'payment_method' => 'cash_on_delivery',
+        ])->assertSessionHasErrors('payment_method');
 
         $this->assertDatabaseCount('orders', 0);
     }

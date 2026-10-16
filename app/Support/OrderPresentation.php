@@ -34,6 +34,7 @@ class OrderPresentation
             'iban' => 'Оплата на IBAN',
             'cash_on_delivery' => 'Післяплата у Новій Пошті',
             'card_on_delivery' => 'Карткою при отриманні',
+            'pay_in_store' => 'Оплата в магазині',
             default => $method ?? '—',
         };
     }
@@ -56,6 +57,7 @@ class OrderPresentation
             'nova_poshta_warehouse' => 'Нова Пошта — відділення',
             'nova_poshta_postomat' => 'Нова Пошта — поштомат',
             'nova_poshta_courier' => 'Нова Пошта — кур\'єр',
+            WarehousePickup::TYPE => 'Самовивіз зі складу',
             default => $type,
         };
     }
@@ -125,6 +127,22 @@ class OrderPresentation
                         'wide' => true,
                     ];
                 }
+            }
+
+            return $fields;
+        }
+
+        if (WarehousePickup::isPickup($order->delivery_type)) {
+            $fields = [];
+
+            if (filled($order->city) || filled(WarehousePickup::CITY)) {
+                $fields[] = ['label' => 'Місто', 'value' => $order->city ?: WarehousePickup::CITY];
+            }
+
+            $address = $order->delivery_address ?: WarehousePickup::fullAddress();
+
+            if (filled($address)) {
+                $fields[] = ['label' => 'Адреса складу', 'value' => $address, 'wide' => true];
             }
 
             return $fields;

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Jobs\SendOrderTelegramNotification;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -85,6 +86,12 @@ class Order extends Model
     {
         static::creating(function (self $order): void {
             $order->number = self::nextNumber();
+        });
+
+        static::created(function (self $order): void {
+            DB::afterCommit(function () use ($order): void {
+                SendOrderTelegramNotification::dispatch($order->id);
+            });
         });
     }
 

@@ -12,12 +12,17 @@
 @section('content')
     @php
         $isPostomat = $order->delivery_type === 'nova_poshta_postomat';
+        $isWarehousePickup = \App\Support\WarehousePickup::isPickup($order->delivery_type);
+        $deliveryLabel = $isWarehousePickup
+            ? __('Самовивіз зі складу')
+            : ($isPostomat ? __('Нова Пошта — поштомат') : ($order->delivery_type === 'nova_poshta_courier' ? __('Нова Пошта — кур\'єр') : __('Нова Пошта — відділення')));
         $paymentLabel = __(match($order->payment_method) {
             'liqpay_hold' => 'Карткою на сайті — LiqPay',
             'mono_checkout' => 'Онлайн-оплата карткою',
             'iban' => 'Оплата на IBAN',
             'cash_on_delivery' => 'Післяплата у Новій Пошті',
             'card_on_delivery' => 'Карткою при отриманні',
+            'pay_in_store' => 'Оплата в магазині',
             default => $order->payment_method,
         });
         $paymentStatus = __(match($order->payment_status) {
@@ -75,12 +80,14 @@
                 <dl>
                     <div><dt>{{ __('Номер замовлення') }}</dt><dd>№{{ $order->number }}</dd></div>
                     <div><dt>{{ __('Сума замовлення') }}</dt><dd>{{ number_format((float) $order->total, 0, ',', ' ') }} ₴</dd></div>
-                    <div><dt>{{ __('Доставка') }}</dt><dd>{{ $isPostomat ? __('Нова Пошта — поштомат') : __('Нова Пошта — відділення') }}</dd></div>
+                    <div><dt>{{ __('Доставка') }}</dt><dd>{{ $deliveryLabel }}</dd></div>
                     @if($order->nova_poshta_city_name || $order->city)
                         <div><dt>{{ __('Місто') }}</dt><dd>{{ $order->nova_poshta_city_name ?: $order->city }}</dd></div>
                     @endif
-                    @if($order->nova_poshta_warehouse_name || $order->delivery_address)
-                        <div><dt>{{ $isPostomat ? __('Поштомат') : __('Відділення') }}</dt><dd>{{ $order->nova_poshta_warehouse_name ?: $order->delivery_address }}</dd></div>
+                    @if($isWarehousePickup && $order->delivery_address)
+                        <div><dt>{{ __('Адреса складу') }}</dt><dd>{{ $order->delivery_address }}</dd></div>
+                    @elseif($order->nova_poshta_warehouse_name || $order->delivery_address)
+                        <div><dt>{{ $isPostomat ? __('Поштомат') : ($order->delivery_type === 'nova_poshta_courier' ? __('Адреса доставки') : __('Відділення')) }}</dt><dd>{{ $order->nova_poshta_warehouse_name ?: $order->delivery_address }}</dd></div>
                     @endif
                     <div><dt>{{ __('Спосіб оплати') }}</dt><dd>{{ $paymentLabel }}</dd></div>
                     @if($order->usesOnlineHoldPayment())

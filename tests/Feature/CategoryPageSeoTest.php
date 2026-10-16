@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Support\CatalogCache;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 class CategoryPageSeoTest extends TestCase
@@ -357,5 +358,50 @@ class CategoryPageSeoTest extends TestCase
             ->getContent();
 
         $this->assertStringContainsString('<h1 data-catalog-heading>Спальні мішки бренд Tramp модель T-500 в наявності</h1>', $html);
+    }
+
+    public function test_old_root_slug_redirects_nested_category_and_product_urls(): void
+    {
+        $root = Category::create([
+            'name' => 'Стрілецьке спорядження',
+            'slug' => 'striletske-sporiadzennia',
+            'is_active' => true,
+        ]);
+        $child = Category::create([
+            'name' => 'Коліматорні',
+            'slug' => 'kolimatorni',
+            'parent_id' => $root->id,
+            'is_active' => true,
+        ]);
+        $product = Product::create([
+            'category_id' => $child->id,
+            'name' => 'Коліматор тестовий',
+            'slug' => 'kolimator-test',
+            'price' => 4500,
+            'stock' => 2,
+            'is_active' => true,
+            'is_processed' => true,
+        ]);
+
+        DB::table('category_slug_redirects')->insert([
+            'old_path' => 'aksesuary-do-zbroyi',
+            'category_id' => $root->id,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        app(CatalogCache::class)->invalidate();
+
+        $this->get('/aksesuary-do-zbroyi/')
+            ->assertRedirect($root->catalogUrl())
+            ->assertStatus(301);
+
+        $this->get('/aksesuary-do-zbroyi/kolimatorni/')
+            ->assertRedirect($child->catalogUrl())
+            ->assertStatus(301);
+
+        $this->get('/aksesuary-do-zbroyi/products/kolimator-test')
+            ->assertRedirect($product->url())
+            ->assertStatus(301);
     }
 }

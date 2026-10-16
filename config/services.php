@@ -92,4 +92,10 @@ return [
         'timeout' => (int) env('OPENAI_TIMEOUT', 60),
     ],
 
+    'telegram' => [
+        'bot_token' => env('TELEGRAM_BOT_TOKEN'),
+        'chat_id' => env('TELEGRAM_CHAT_ID'),
+        'orders_enabled' => env('TELEGRAM_ORDERS_ENABLED', true),
+    ],
+
 ];
