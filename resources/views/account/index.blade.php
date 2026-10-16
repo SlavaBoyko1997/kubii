@@ -67,14 +67,14 @@
                         @if(\App\Support\WarehousePickup::isPickup($order->delivery_type))
                             <section class="account-delivery-card">
                                 <div class="account-delivery-brand">
-                                    <div><span>{{ __('Спосіб доставки') }}</span><strong>{{ __('Самовивіз зі складу') }}</strong></div>
+                                    <div><span>{{ __('Спосіб доставки') }}</span><strong>{{ __(\App\Support\WarehousePickup::LABEL) }}</strong></div>
                                 </div>
                                 <div class="account-delivery-grid">
                                     @if($order->city)
                                         <div><span>{{ __('Місто') }}</span><strong>{{ $order->city }}</strong></div>
                                     @endif
                                     @if($order->delivery_address)
-                                        <div class="wide"><span>{{ __('Адреса складу') }}</span><strong>{{ $order->delivery_address }}</strong></div>
+                                        <div class="wide"><span>{{ __('Адреса магазину') }}</span><strong>{{ $order->delivery_address }}</strong></div>
                                     @endif
                                 </div>
                             </section>

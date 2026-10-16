@@ -902,8 +902,9 @@ class StoreCheckoutTest extends TestCase
 
         $this->get(route('checkout.create'))
             ->assertOk()
-            ->assertSee('Самовивіз зі складу')
+            ->assertSee('Самовивіз з магазину')
             ->assertSee('Київський шлях, 79в')
+            ->assertSee('магазин kubik')
             ->assertSee('value="warehouse_pickup"', false)
             ->assertSee('Оплата в магазині')
             ->assertSee('value="pay_in_store"', false);
@@ -938,16 +939,17 @@ class StoreCheckoutTest extends TestCase
             'id' => $order->id,
             'delivery_type' => 'warehouse_pickup',
             'city' => 'Бориспіль',
-            'delivery_address' => 'вул. Київський шлях, 79в, Бориспіль',
+            'delivery_address' => 'вул. Київський шлях, 79в, Бориспіль (магазин kubik)',
             'payment_method' => 'pay_in_store',
             'nova_poshta_city_ref' => null,
             'nova_poshta_warehouse_ref' => null,
         ]);
         $this->get(route('checkout.success', $order))
             ->assertOk()
-            ->assertSee('Самовивіз зі складу')
+            ->assertSee('Самовивіз з магазину')
             ->assertSee('Оплата в магазині')
-            ->assertSee('Київський шлях, 79в');
+            ->assertSee('Київський шлях, 79в')
+            ->assertSee('магазин kubik');
     }
 
     public function test_pay_in_store_is_rejected_without_warehouse_pickup(): void

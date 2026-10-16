@@ -161,14 +161,14 @@ class CheckoutController extends Controller
         if ($validated['payment_method'] === WarehousePickup::PAYMENT_CODE
             && $validated['delivery_type'] !== WarehousePickup::TYPE) {
             throw ValidationException::withMessages([
-                'payment_method' => __('Оплата в магазині доступна лише при самовивозі зі складу.'),
+                'payment_method' => __('Оплата в магазині доступна лише при самовивозі з магазину.'),
             ]);
         }
 
         if ($validated['delivery_type'] === WarehousePickup::TYPE
             && $validated['payment_method'] === 'cash_on_delivery') {
             throw ValidationException::withMessages([
-                'payment_method' => __('Післяплата у Новій Пошті недоступна при самовивозі зі складу.'),
+                'payment_method' => __('Післяплата у Новій Пошті недоступна при самовивозі з магазину.'),
             ]);
         }
 

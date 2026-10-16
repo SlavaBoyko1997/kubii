@@ -31,7 +31,7 @@ class OrderPresentationTest extends TestCase
         $this->assertSame('Кошти заблоковано', OrderPresentation::paymentStatusLabel('holded'));
         $this->assertSame('Онлайн-оплата карткою — Monobank', OrderPresentation::paymentMethodLabel('mono_checkout'));
         $this->assertSame('Оплата в магазині', OrderPresentation::paymentMethodLabel('pay_in_store'));
-        $this->assertSame('Самовивіз зі складу', OrderPresentation::deliveryTypeLabel(WarehousePickup::TYPE));
+        $this->assertSame(WarehousePickup::LABEL, OrderPresentation::deliveryTypeLabel(WarehousePickup::TYPE));
     }
 
     public function test_delivery_fields_for_warehouse_pickup(): void
@@ -46,8 +46,8 @@ class OrderPresentationTest extends TestCase
 
         $this->assertSame('Бориспіль', collect($fields)->firstWhere('label', 'Місто')['value']);
         $this->assertSame(
-            'вул. Київський шлях, 79в, Бориспіль',
-            collect($fields)->firstWhere('label', 'Адреса складу')['value'],
+            WarehousePickup::fullAddress(),
+            collect($fields)->firstWhere('label', 'Адреса магазину')['value'],
         );
     }
 }

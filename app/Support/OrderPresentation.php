@@ -57,7 +57,7 @@ class OrderPresentation
             'nova_poshta_warehouse' => 'Нова Пошта — відділення',
             'nova_poshta_postomat' => 'Нова Пошта — поштомат',
             'nova_poshta_courier' => 'Нова Пошта — кур\'єр',
-            WarehousePickup::TYPE => 'Самовивіз зі складу',
+            WarehousePickup::TYPE => WarehousePickup::LABEL,
             default => $type,
         };
     }
@@ -142,7 +142,7 @@ class OrderPresentation
             $address = $order->delivery_address ?: WarehousePickup::fullAddress();
 
             if (filled($address)) {
-                $fields[] = ['label' => 'Адреса складу', 'value' => $address, 'wide' => true];
+                $fields[] = ['label' => 'Адреса магазину', 'value' => $address, 'wide' => true];
             }
 
             return $fields;

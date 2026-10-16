@@ -14,7 +14,7 @@
         $isPostomat = $order->delivery_type === 'nova_poshta_postomat';
         $isWarehousePickup = \App\Support\WarehousePickup::isPickup($order->delivery_type);
         $deliveryLabel = $isWarehousePickup
-            ? __('Самовивіз зі складу')
+            ? __(\App\Support\WarehousePickup::LABEL)
             : ($isPostomat ? __('Нова Пошта — поштомат') : ($order->delivery_type === 'nova_poshta_courier' ? __('Нова Пошта — кур\'єр') : __('Нова Пошта — відділення')));
         $paymentLabel = __(match($order->payment_method) {
             'liqpay_hold' => 'Карткою на сайті — LiqPay',
@@ -85,7 +85,7 @@
                         <div><dt>{{ __('Місто') }}</dt><dd>{{ $order->nova_poshta_city_name ?: $order->city }}</dd></div>
                     @endif
                     @if($isWarehousePickup && $order->delivery_address)
-                        <div><dt>{{ __('Адреса складу') }}</dt><dd>{{ $order->delivery_address }}</dd></div>
+                        <div><dt>{{ __('Адреса магазину') }}</dt><dd>{{ $order->delivery_address }}</dd></div>
                     @elseif($order->nova_poshta_warehouse_name || $order->delivery_address)
                         <div><dt>{{ $isPostomat ? __('Поштомат') : ($order->delivery_type === 'nova_poshta_courier' ? __('Адреса доставки') : __('Відділення')) }}</dt><dd>{{ $order->nova_poshta_warehouse_name ?: $order->delivery_address }}</dd></div>
                     @endif

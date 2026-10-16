@@ -51,7 +51,7 @@
                             <img src="{{ asset('images/nova-poshta-logo.png') }}" alt="{{ __('Нова Пошта') }}" width="1654" height="651">
                         </div>
                     </div>
-                    <p class="nova-poshta-intro">{{ __('Оберіть самовивіз зі складу в Борисполі або доставку Новою Поштою.') }}</p>
+                    <p class="nova-poshta-intro">{{ __('Оберіть самовивіз з магазину в Борисполі або доставку Новою Поштою.') }}</p>
                     @php
                         $selectedDeliveryType = old('delivery_type', $checkoutDefaults['delivery_type']);
                         $isWarehousePickup = $selectedDeliveryType === \App\Support\WarehousePickup::TYPE;
@@ -70,7 +70,7 @@
                         data-cargo-only="{{ $shipmentProfile['requires_cargo_warehouse'] ? '1' : '0' }}"
                     >
                         <div class="wide nova-poshta-stage">
-                            <div class="nova-poshta-stage-head"><b>1</b><div><strong>{{ __('Як бажаєте отримати замовлення?') }}</strong><small>{{ __('Самовивіз зі складу або доставка Новою Поштою') }}</small></div></div>
+                            <div class="nova-poshta-stage-head"><b>1</b><div><strong>{{ __('Як бажаєте отримати замовлення?') }}</strong><small>{{ __('Самовивіз з магазину або доставка Новою Поштою') }}</small></div></div>
                             <fieldset class="nova-poshta-types">
                                 <legend class="sr-only">{{ __('Тип доставки') }}</legend>
                                 <label>
@@ -79,7 +79,7 @@
                                         <path d="M7 14.5 16 7l9 7.5V26H7V14.5Z"/>
                                         <path d="M12 26V18h8v8M10 13h12"/>
                                     </svg>
-                                    <span><strong>{{ __('Самовивіз зі складу') }}</strong><small>{{ __('м. Бориспіль, вул. Київський шлях, 79в') }}</small></span>
+                                    <span><strong>{{ __(\App\Support\WarehousePickup::SHORT_LABEL) }}</strong><small>{{ __(\App\Support\WarehousePickup::ADDRESS_LINE) }}</small></span>
                                 </label>
                                 <label>
                                     <input type="radio" name="delivery_type" value="nova_poshta_warehouse" @checked($selectedDeliveryType === 'nova_poshta_warehouse' || (! $isWarehousePickup && ! $shipmentProfile['postomat_available'] && ! in_array($selectedDeliveryType, ['nova_poshta_postomat', 'nova_poshta_courier'], true)))>
@@ -112,8 +112,8 @@
                                 </label>
                             </fieldset>
                             <div class="warehouse-pickup-card" data-warehouse-pickup-card @unless($isWarehousePickup) hidden @endunless>
-                                <strong>{{ __('Самовивіз зі складу') }}</strong>
-                                <p>{{ __('м. Бориспіль, вул. Київський шлях, 79в') }}</p>
+                                <strong>{{ __(\App\Support\WarehousePickup::SHORT_LABEL) }}</strong>
+                                <p>{{ __(\App\Support\WarehousePickup::ADDRESS_LINE) }}</p>
                                 <small>{{ __('Після підтвердження менеджером можна забрати замовлення самостійно.') }}</small>
                             </div>
                         </div>
@@ -226,7 +226,7 @@
                                     @elseif($paymentOption->code === 'cash_on_delivery')
                                         <small>{{ __('Післяплата на відділенні · комісія 2% + 20 ₴') }}</small>
                                     @elseif($paymentOption->code === 'pay_in_store')
-                                        <small>{{ __('Готівка або картка при отриманні на складі в Борисполі') }}</small>
+                                        <small>{{ __('Готівка або картка при отриманні в магазині kubik у Борисполі') }}</small>
                                     @endif
                                 </span>
                             </label>

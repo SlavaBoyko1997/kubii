@@ -35,7 +35,7 @@ class ProductDeliveryPaymentTest extends TestCase
             ->assertSee('Нова Пошта · відділення / поштомат', false)
             ->assertSee('Безкоштовна доставка від 3 000 ₴', false)
             ->assertSee('Кур’єр: Київ 499 ₴ · Бориспіль 199 ₴', false)
-            ->assertSee('Самовивіз зі складу у Борисполі', false)
+            ->assertSee('Самовивіз з магазину м. Бориспіль, вул. Київський шлях, 79в (магазин kubik)', false)
             ->assertSee('Мін. замовлення 500 ₴ · від 20 000 ₴ — повна оплата', false)
             ->assertSee('Детальніше про доставку та оплату', false)
             ->assertSee('Оплата карткою на сайті', false)

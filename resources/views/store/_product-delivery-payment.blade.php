@@ -24,7 +24,7 @@
             <p class="product-service-hint">{{ __('Нова Пошта · відділення / поштомат') }}</p>
             <p class="product-service-free">{{ \App\Support\FreeDelivery::promoLabel() }}</p>
             <p class="product-service-hint">{{ __('Кур’єр: Київ 499 ₴ · Бориспіль 199 ₴') }}</p>
-            <p class="product-service-hint">{{ __('Самовивіз зі складу у Борисполі') }}</p>
+            <p class="product-service-hint">{{ __(\App\Support\WarehousePickup::LABEL) }}</p>
         </div>
     </div>
     <div class="product-service-row">
