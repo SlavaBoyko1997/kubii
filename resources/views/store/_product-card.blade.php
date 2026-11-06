@@ -30,7 +30,7 @@
                 @endif
             </div>
         </div>
-        @if($product->isPurchasable())<button class="quick-order-link" type="button" data-open-quick-order data-product-id="{{ $product->id }}" data-product-name="{{ $product->name }}">{{ __('Швидке замовлення') }}</button>@endif
+        @if($product->isPurchasable() && \App\Support\MinimumOrder::qualifies($product->salePrice()))<button class="quick-order-link" type="button" data-open-quick-order data-product-id="{{ $product->id }}" data-product-name="{{ $product->name }}">{{ __('Швидке замовлення') }}</button>@endif
         @if($product->isPricePending())<p class="out-of-stock-text">{{ __('Очікується надходження') }}</p>@elseif($product->stock < 1)<p class="out-of-stock-text">{{ __('Очікується надходження') }}</p>@endif
     </div>
 </article>

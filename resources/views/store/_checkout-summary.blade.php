@@ -1,9 +1,11 @@
 @php
     use App\Support\FreeDelivery;
+    use App\Support\MinimumOrder;
 
     $regularTotal = $items->sum(fn ($item) => $item['product']->price * $item['quantity']);
     $savings = max(0, $regularTotal - $total);
     $deliveryIsFree = FreeDelivery::qualifies($total);
+    $meetsMinimumOrder = MinimumOrder::qualifies($total);
 @endphp
 <div class="summary-head"><span>{{ __('Підсумки') }}</span><h2>{{ __('Товари') }} {{ $items->sum('quantity') }}</h2></div>
 <p class="summary-delivery-note">{{ __('Відправка після підтвердження менеджером') }}</p>
@@ -24,5 +26,8 @@
     </strong>
 </div>
 <div class="summary-total"><span>{{ __('До сплати') }}</span><strong>{{ number_format($total, 0, ',', ' ') }} ₴</strong></div>
+@if (! $meetsMinimumOrder)
+    <p class="min-order-hint">{{ MinimumOrder::hintForTotal($total) }}</p>
+@endif
 @auth<p class="readonly-hint">{{ __('Email і телефон беруться з вашого профілю. Якщо частина ПІБ ще не заповнена, ми збережемо її після оформлення.') }}</p>@endauth
-<button class="primary-button" type="button" data-checkout-submit data-checkout-empty="{{ $items->isEmpty() ? 1 : 0 }}" aria-disabled="true">{{ __('Замовлення підтверджую') }}</button>
+<button class="primary-button" type="button" data-checkout-submit data-checkout-empty="{{ (! $meetsMinimumOrder || $items->isEmpty()) ? 1 : 0 }}" aria-disabled="true">{{ __('Замовлення підтверджую') }}</button>

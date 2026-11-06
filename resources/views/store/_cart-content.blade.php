@@ -40,7 +40,7 @@
             <div class="cart-summary-row"><span>{{ __('Товари') }}</span><strong>{{ number_format($total, 0, ',', ' ') }} ₴</strong></div>
             @if($savings > 0)<div class="cart-summary-row cart-saving"><span>{{ __('Ваша вигода') }}</span><strong>{{ number_format($savings, 0, ',', ' ') }} ₴</strong></div>@endif
             @include('store._cart-delivery-summary', ['total' => $total])
-            <a class="primary-button" href="{{ localized_route('checkout.create') }}">{{ __('Оформити замовлення') }}</a>
+            @include('store._checkout-cta', ['total' => $total])
         </aside>
     </div>
 @endif

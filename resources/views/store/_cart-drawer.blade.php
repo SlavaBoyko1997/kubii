@@ -37,6 +37,6 @@
         <div class="drawer-total"><span>{{ __('Разом') }}</span><strong>{{ number_format($drawerTotal, 0, ',', ' ') }} ₴</strong></div>
         @if($drawerSavings > 0)<div class="drawer-saving"><span>{{ __('Ваша вигода') }}</span><strong>{{ number_format($drawerSavings, 0, ',', ' ') }} ₴</strong></div>@endif
         @include('store._cart-delivery-summary', ['total' => $drawerTotal, 'context' => 'drawer'])
-        <a class="primary-button" href="{{ localized_route('checkout.create') }}">{{ __('Оформити замовлення') }}</a>
+        @include('store._checkout-cta', ['total' => $drawerTotal])
     </div>
 @endif

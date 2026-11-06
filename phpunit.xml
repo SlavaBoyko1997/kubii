@@ -35,5 +35,6 @@
         <env name="TELEGRAM_ORDERS_ENABLED" value="false"/>
         <env name="TELEGRAM_BOT_TOKEN" value=""/>
         <env name="TELEGRAM_CHAT_ID" value=""/>
+        <env name="MIN_ORDER_TOTAL" value="0"/>
     </php>
 </phpunit>

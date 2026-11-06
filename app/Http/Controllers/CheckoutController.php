@@ -10,6 +10,7 @@ use App\Rules\PhoneNumber;
 use App\Services\NovaPoshtaService;
 use App\Support\Cart;
 use App\Support\GuestCustomerProfile;
+use App\Support\MinimumOrder;
 use App\Support\NovaPoshtaShipment;
 use App\Support\PaymentOptions;
 use App\Support\WarehousePickup;
@@ -31,6 +32,10 @@ class CheckoutController extends Controller
     ): View|RedirectResponse {
         if ($cart->items()->isEmpty()) {
             return redirect()->to(localized_route('cart.index'))->with('error', __('Спочатку додайте товари до кошика.'));
+        }
+
+        if ($redirect = $this->redirectIfBelowMinimum($cart->total())) {
+            return $redirect;
         }
 
         $lastOrder = $request->user()?->orders()
@@ -365,6 +370,10 @@ class CheckoutController extends Controller
             return redirect()->to(localized_route('cart.index'))->with('error', __('Ваш кошик порожній.'));
         }
 
+        if ($redirect = $this->redirectIfBelowMinimum($cart->total())) {
+            return $redirect;
+        }
+
         $order = DB::transaction(function () use ($validated, $items, $guestUserId): Order {
             $order = Order::create([
                 ...$validated,
@@ -432,6 +441,13 @@ class CheckoutController extends Controller
 
         $product = Product::query()->where('is_active', true)->findOrFail($validated['product_id']);
         $quantity = $validated['quantity'] ?? 1;
+        $lineTotal = $product->salePrice() * $quantity;
+
+        if (! MinimumOrder::qualifies($lineTotal)) {
+            throw ValidationException::withMessages([
+                'product_id' => MinimumOrder::errorMessage($lineTotal),
+            ]);
+        }
 
         if ($request->user() && ! $request->user()->phone) {
             throw ValidationException::withMessages([
@@ -516,5 +532,16 @@ class CheckoutController extends Controller
             'order' => $order->loadMissing('items.product'),
             'trackPurchase' => $trackPurchase,
         ]);
+    }
+
+    private function redirectIfBelowMinimum(float $total): ?RedirectResponse
+    {
+        if (MinimumOrder::qualifies($total)) {
+            return null;
+        }
+
+        return redirect()
+            ->to(localized_route('cart.index'))
+            ->with('error', MinimumOrder::errorMessage($total));
     }
 }

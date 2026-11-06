@@ -175,7 +175,9 @@
                                 <input type="number" name="quantity" min="1" max="{{ $product->stock }}" value="1" aria-label="{{ __('Кількість') }}">
                                 <button class="primary-button {{ in_array($product->id, $cartProductIds) ? 'in-cart' : '' }}" data-cart-button data-cart-default-label="{{ __('Додати до кошика') }}" data-cart-active-label="{{ __('У кошику') }}">{{ in_array($product->id, $cartProductIds) ? __('У кошику') : __('Додати до кошика') }}</button>
                             </form>
-                            <button class="quick-order-button" type="button" data-open-quick-order data-product-id="{{ $product->id }}" data-product-name="{{ $product->name }}">{{ __('Швидке замовлення в один клік') }}</button>
+                            @if(\App\Support\MinimumOrder::qualifies($product->salePrice()))
+                                <button class="quick-order-button" type="button" data-open-quick-order data-product-id="{{ $product->id }}" data-product-name="{{ $product->name }}">{{ __('Швидке замовлення в один клік') }}</button>
+                            @endif
                         @endif
                         @include('store._product-list-actions', ['product' => $product, 'class' => 'detail-list-actions'])
                     </div>

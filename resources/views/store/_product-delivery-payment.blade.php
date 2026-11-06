@@ -45,7 +45,7 @@
             @else
                 <p class="product-service-hint">{{ __('Уточнюйте спосіб оплати у менеджера') }}</p>
             @endif
-            <p class="product-service-hint">{{ __('Мін. замовлення 500 ₴ · від 20 000 ₴ — повна оплата') }}</p>
+            <p class="product-service-hint">{{ \App\Support\MinimumOrder::productHint() }}</p>
         </div>
     </div>
     <a class="product-service-more" href="{{ localized_route('pages.show', 'delivery') }}">{{ __('Детальніше про доставку та оплату') }} <span aria-hidden="true">→</span></a>

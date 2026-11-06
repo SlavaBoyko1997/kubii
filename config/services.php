@@ -46,6 +46,10 @@ return [
         'threshold' => (int) env('FREE_DELIVERY_THRESHOLD', 3000),
     ],
 
+    'min_order' => [
+        'threshold' => (int) env('MIN_ORDER_TOTAL', 1500),
+    ],
+
     'liqpay' => [
         'public_key' => env('LIQPAY_PUBLIC_KEY'),
         'private_key' => env('LIQPAY_PRIVATE_KEY'),

@@ -12,6 +12,7 @@ use App\Services\CatalogSpecificationFacets;
 use App\Services\IbisFeedImporter;
 use App\Services\NovaPoshtaService;
 use App\Support\CatalogCache;
+use App\Support\MinimumOrder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
@@ -2024,5 +2025,96 @@ class StoreCheckoutTest extends TestCase
             ->assertSee('Сторінку не знайдено')
             ->assertSee('Маршрут загубився')
             ->assertSee('noindex, follow', false);
+    }
+
+    public function test_checkout_is_blocked_below_minimum_order(): void
+    {
+        config(['services.min_order.threshold' => 1500]);
+
+        $category = Category::create(['name' => 'Мін. замовлення', 'slug' => 'min-order']);
+        $product = Product::create([
+            'category_id' => $category->id,
+            'name' => 'Дешевий товар',
+            'slug' => 'min-order-cheap',
+            'price' => 800,
+            'stock' => 5,
+        ]);
+
+        $this->post(route('cart.store', $product));
+
+        $this->get(route('cart.index'))
+            ->assertOk()
+            ->assertSee('Мінімальне замовлення 1 500 ₴. Додайте ще на 700 ₴', false)
+            ->assertDontSee('href="'.route('checkout.create').'"', false);
+
+        $this->get(route('checkout.create'))
+            ->assertRedirect(route('cart.index'))
+            ->assertSessionHas('error', MinimumOrder::errorMessage(800));
+
+        $this->post(route('checkout.store'), [
+            'last_name' => 'Петренко',
+            'first_name' => 'Іван',
+            'patronymic' => 'Петрович',
+            'phone' => '+380991234567',
+            'email' => 'min-order@example.com',
+            ...$this->novaPoshtaDelivery(),
+            'payment_method' => 'cash_on_delivery',
+        ])
+            ->assertRedirect(route('cart.index'))
+            ->assertSessionHas('error', MinimumOrder::errorMessage(800));
+
+        $this->assertDatabaseCount('orders', 0);
+    }
+
+    public function test_checkout_is_allowed_when_minimum_order_is_met(): void
+    {
+        config(['services.min_order.threshold' => 1500]);
+
+        $category = Category::create(['name' => 'Мін. замовлення ок', 'slug' => 'min-order-ok']);
+        $product = Product::create([
+            'category_id' => $category->id,
+            'name' => 'Товар на мінімум',
+            'slug' => 'min-order-ok',
+            'price' => 1500,
+            'stock' => 3,
+        ]);
+
+        $this->post(route('cart.store', $product));
+
+        $this->get(route('checkout.create'))->assertOk();
+
+        $this->post(route('checkout.store'), [
+            'last_name' => 'Петренко',
+            'first_name' => 'Іван',
+            'patronymic' => 'Петрович',
+            'phone' => '+380991234567',
+            'email' => 'min-order-ok@example.com',
+            ...$this->novaPoshtaDelivery(),
+            'payment_method' => 'cash_on_delivery',
+        ]);
+
+        $this->assertDatabaseCount('orders', 1);
+    }
+
+    public function test_quick_order_is_blocked_below_minimum_order(): void
+    {
+        config(['services.min_order.threshold' => 1500]);
+
+        $category = Category::create(['name' => 'Швидке мін.', 'slug' => 'quick-min']);
+        $product = Product::create([
+            'category_id' => $category->id,
+            'name' => 'Дешеве швидке',
+            'slug' => 'quick-min-cheap',
+            'price' => 900,
+            'stock' => 4,
+        ]);
+
+        $this->postJson(route('checkout.quick'), [
+            'product_id' => $product->id,
+            'phone' => '+380991234567',
+        ])->assertUnprocessable()
+            ->assertJsonValidationErrors('product_id');
+
+        $this->assertDatabaseCount('orders', 0);
     }
 }

@@ -14,6 +14,8 @@ class ProductDeliveryPaymentTest extends TestCase
 
     public function test_product_page_shows_delivery_and_payment_block(): void
     {
+        config(['services.min_order.threshold' => 1500]);
+
         $category = Category::create([
             'name' => 'Намети',
             'slug' => 'tents',
@@ -36,7 +38,7 @@ class ProductDeliveryPaymentTest extends TestCase
             ->assertSee('Безкоштовна доставка від 3 000 ₴', false)
             ->assertSee('Кур’єр: Київ 499 ₴ · Бориспіль 199 ₴', false)
             ->assertSee('Самовивіз з магазину м. Бориспіль, вул. Київський шлях, 79в (магазин kubik)', false)
-            ->assertSee('Мін. замовлення 500 ₴ · від 20 000 ₴ — повна оплата', false)
+            ->assertSee('Мін. замовлення 1 500 ₴ · від 20 000 ₴ — повна оплата', false)
             ->assertSee('Детальніше про доставку та оплату', false)
             ->assertSee('Оплата карткою на сайті', false)
             ->assertSee('Післяплата у Новій Пошті', false)
